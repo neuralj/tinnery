@@ -1,0 +1,140 @@
+# Current Slice — Shared Flow Lifecycle with a Contact CLI
+
+> **Type:** Validation Slice  
+> **Status:** Proposed  
+> **Scope:** In-repository demonstration  
+> **Related Goal:** G-01 — Validate the Shared Flow Lifecycle (`Candidate`)  
+> **Authority:** This document proposes an experiment; it does not itself accept G-01 or authorize production execution.
+
+## 1. Objective
+
+Test whether one versioned business Flow can be invoked by both a host CLI and Tinnery through the same explicit contract, while Tinnery supports isolated candidate experimentation, independent verification, and controlled version activation and rollback.
+
+The experiment must test the shared protocol and governance boundary—not merely prove that a contact-normalization function works.
+
+## 2. Demonstration Host
+
+Create a small contact-normalization CLI under `examples/contacts_cli/` in the Tinnery repository.
+
+This is an explicit demonstration-only host application colocated with Tinnery to reduce setup cost. It is not part of the Tinnery core package and does not imply that future host CLIs must share the same repository or deployment.
+
+The example owns the contact domain logic. Tinnery must not contain a second implementation of that logic, and the Tinnery core must not depend on or import the example as a built-in domain implementation.
+
+## 3. Scenario
+
+The host CLI reads synthetic contacts from a SQLite source table, normalizes them, and writes the results to a SQLite target table in an isolated demo workspace.
+
+- **Input:** `input.sqlite: raw_contacts`, opened through a read-only source boundary.
+- **Output:** `output.sqlite: normalized_contacts`, written only to a disposable target database/table for this experiment.
+
+**Isolation choice:** Use separate source and target SQLite files in this first slice so the canonical input can be checked independently and is not the write target. Writing to a second table in the same SQLite file is a possible later variation, but must not be described as strongly isolated merely because separate connections are used.
+
+**Transformation:** A deterministic function receives records and returns normalized records. It does not open databases, execute SQL, select versions, or persist output.
+
+- **Initial version:** V1 is the known accepted baseline for the demo.
+- **Candidate version:** V2 is developed with AI assistance and remains isolated until verification and explicit activation.
+
+**Invocation:** Native CLI and Tinnery use the same Flow contract and the same version-resolution/call boundary. The CLI must not hard-code a separate V1 implementation.
+
+Use synthetic, bounded fixtures only. No production database, credential, or business data is in scope.
+
+### Initial Transformation Contract (proposed for this slice)
+
+- Preserve `contact_id` as the stable output key.
+- Normalize `full_name` by trimming leading/trailing whitespace and collapsing consecutive whitespace to one space. Reject null or empty normalized names.
+- Normalize `email` by trimming leading/trailing whitespace and converting letters to lowercase. Reject null or empty normalized emails.
+- Produce exactly one output row per valid input contact.
+- Validate the complete input before mutating the target. If any contact is invalid, fail the batch and leave the target unchanged.
+- Re-running the same valid input must not create duplicate keys or change the normalized business values.
+
+Use a small deterministic fixture such as `" Alice   Chen " / " ALICE@EXAMPLE.COM "` → `"Alice Chen" / "alice@example.com"`. The final fixture and exact acceptance assertions must be committed with the implementation before the slice can pass.
+
+## 4. Minimal Lifecycle to Demonstrate
+
+1. Run the baseline V1 through the native CLI and retain its observable result.
+2. Develop V2 with AI assistance without overwriting the accepted V1.
+3. Execute V2 in an isolated experiment with bounded inputs and a disposable output target.
+4. Independently verify V2's output and compare it with the contract and V1 where comparison is meaningful.
+5. Activate V2 only through an explicit acceptance step.
+6. Run the native CLI again and verify that it resolves and invokes V2 through the shared boundary.
+7. Revoke activation or roll back to V1, run the CLI again, and verify the actual implementation used.
+
+AI-assisted development in this slice does not require integrating an LLM service or building an autonomous coding agent into Tinnery. The AI may participate in the engineering workflow that creates V2; Tinnery's own automated AI-agent orchestration is out of scope.
+
+## 5. Acceptance Criteria
+
+The slice passes only when the evidence demonstrates all applicable criteria below:
+
+- **Shared implementation:** CLI and Tinnery invoke the same identified Flow implementation through the same versioned contract; the demo does not duplicate business logic.
+- **Version traceability:** Every run records the resolved Flow/version identity, selected execution path, and result status.
+- **Isolation:** Candidate execution uses synthetic bounded input and disposable output. The canonical input fixture remains unchanged.
+- **Independent verification:** A verifier separate from the transformation checks expected normalized values, key uniqueness, record counts, invalid-input behavior, and repeated-run behavior.
+- **Failure atomicity:** Invalid input fails the batch without leaving partial target results for that batch.
+- **Controlled activation:** V2 cannot become the CLI's active version merely because it exists or its own execution reports success; activation requires an explicit acceptance action.
+- **Rollback:** After rollback, the CLI again resolves V1, and run evidence confirms which version actually executed.
+- **Observable execution:** A run produces inspectable status and result evidence, including version identity and verification outcome. A full web UI is not required in this slice.
+- **No production effects:** No production service, data source, or deployment target is accessed or modified.
+
+The proposed contract above is the starting point for implementation. If its business semantics are changed, record the change explicitly before updating the acceptance tests; do not silently weaken expected behavior to make a candidate pass.
+
+## 6. Scope Limits / Non-goals
+
+This slice does not aim to deliver:
+
+- A universal ETL or multi-database framework.
+- A general-purpose DAG engine or production scheduler.
+- A web-based visual editor or full workflow UI.
+- A built-in LLM service or autonomous AI-coding agent.
+- Production deployment, automatic promotion, or production data writes.
+- A general plugin marketplace, multi-language RPC framework, or distributed worker system.
+- A claim that arbitrary candidate code is secure merely because it follows the Flow contract.
+
+The demo may use the smallest mechanism sufficient to test the protocol. Any mechanism chosen here must be recorded as provisional unless explicitly accepted as a project decision.
+
+## 7. Constraints
+
+- Domain logic remains owned by `examples/contacts_cli/`.
+- The transformation receives data and returns data; database access and persistence remain outside it.
+- The candidate must not receive unrestricted source/target database handles through the transformation interface.
+- Source access is read-only; candidate writes are restricted to disposable output.
+- Version selection and activation must be explicit and observable, not hidden in CLI-specific branching.
+- An execution-success status is not an independent correctness verdict.
+- Governance guarantees apply only to operations that actually pass through the enforced demo execution boundary. If the candidate can bypass that boundary, the slice must not claim stronger isolation than the evidence supports.
+
+## 8. Stop Conditions
+
+Stop and report the unresolved issue if any of the following occurs:
+
+- The CLI and Tinnery require separate copies of the business logic to work.
+- The CLI bypasses the shared version-resolution/call boundary.
+- V2 can overwrite or alter V1 before explicit activation.
+- The experiment cannot keep candidate output separate from the canonical input fixture.
+- The verifier merely repeats the transformation's own success claim instead of checking output independently.
+- The actual implementation/version used by a run cannot be identified.
+- Isolation or permitted side effects cannot be established with evidence.
+- The implementation requires introducing a broad framework whose need is not demonstrated by this slice.
+
+A stop condition is a valid result. Do not silently weaken the contract to obtain a passing demo.
+
+## 9. Evidence to Retain
+
+Retain only evidence needed to reproduce and assess this slice:
+
+- The exact Flow contract and its version.
+- The identity/hash of each tested implementation version.
+- The synthetic input fixture identity and confirmation that the canonical input remained unchanged.
+- The resolved version and status for each CLI/Tinnery run.
+- The verifier's results, including output comparison and invalid-input/failure-atomicity tests.
+- Activation and rollback actions, plus evidence of the version used afterward.
+- Commands or test instructions required to reproduce the result.
+
+## 10. Decision After the Slice
+
+After verification, explicitly decide whether to:
+
+- accept G-01 or revise/reject it;
+- accept any protocol or governance decisions demonstrated by the experiment;
+- revise the slice because evidence exposed a missing requirement; or
+- start a separate slice for scheduling and richer visual inspection.
+
+Passing this slice does not automatically accept every architectural choice made during implementation, nor does it establish production readiness.

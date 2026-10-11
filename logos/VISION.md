@@ -8,6 +8,6 @@ Tinnery enables AI-assisted development of multiple candidate implementations, w
 
 Correctness must be established through explicit contracts and observed results, not inferred from successful execution or AI-generated claims. Only explicitly accepted implementations are eligible for governed execution.
 
-The first demonstration will validate this lifecycle using an existing CLI and a bounded data transformation, proving that candidate implementations can be experimented with and verified in Tinnery while the host application continues to use the governed implementation.
+The first demonstration will validate this lifecycle using a small host CLI demonstration and a bounded data transformation, proving that candidate implementations can be experimented with and verified in Tinnery while the host application continues to use the governed implementation.
 
 **Principle:** Let implementations evolve quickly; make execution observable, correctness verifiable, and activation explicitly governed.

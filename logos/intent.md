@@ -21,9 +21,9 @@ Establish a shared, versioned Flow protocol and governance mechanism through whi
 
 **Status / 状态:** Candidate / 候选
 
-Validate the following lifecycle through an existing CLI and a bounded data transformation scenario.
+Validate the following lifecycle through a small host CLI demonstration and a bounded data transformation scenario.
 
-通过一个现有 CLI 和一个有界的数据转换场景，验证以下生命周期：
+通过一个小型宿主 CLI 演示和一个有界的数据转换场景，验证以下生命周期：
 
 - The CLI and Tinnery use the same business implementation and versioned contract.
   CLI 与 Tinnery 使用同一份业务实现和版本化契约。
@@ -91,6 +91,6 @@ Formal acceptance of this Goal and its acceptance criteria are defined by the cu
 
 ## Current Slice / 当前切片
 
-See `docs/current-slice.md` for the currently authorized engineering scope, acceptance criteria, verification evidence, and stop conditions.
+See `current-slice.md` for the currently authorized engineering scope, acceptance criteria, verification evidence, and stop conditions.
 
-当前获准的工程范围、验收标准、验证证据及停止条件，参见 `docs/current-slice.md`。
+当前获准的工程范围、验收标准、验证证据及停止条件，参见 `current-slice.md`。
