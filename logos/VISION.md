@@ -2,14 +2,12 @@
 
 Tinnery provides a shared Flow protocol and governance layer for CLI applications.
 
-A business Flow remains owned by its host application while becoming discoverable and executable by Tinnery through the same explicit protocol. Business logic is defined once, not duplicated between the CLI and Flow Hub.
+Business Flows remain owned by their host applications and can be invoked by either the native CLI or Tinnery through the same versioned contract and execution boundary. Business logic is defined once, not duplicated.
 
-Multiple implementations of a Flow may coexist. Tinnery governs their AI-assisted development, isolated experimentation, independent verification, activation, and retirement. Only explicitly accepted versions are eligible for governed execution.
+Tinnery enables AI-assisted development of multiple candidate implementations, with rapid isolated execution, visual inspection, independent verification, comparison, scheduling, activation, and rollback.
 
-The host CLI and Tinnery must resolve implementations through the same versioned contract and execution boundary, allowing governed upgrades and rollbacks without duplicating business logic.
+Correctness must be established through explicit contracts and observed results, not inferred from successful execution or AI-generated claims. Only explicitly accepted implementations are eligible for governed execution.
 
-Tinnery governs only operations routed through this boundary; it does not automatically control arbitrary code or side effects outside enforced runtime constraints.
+The first demonstration will validate this lifecycle using an existing CLI and a bounded data transformation, proving that candidate implementations can be experimented with and verified in Tinnery while the host application continues to use the governed implementation.
 
-The first demonstration will prove that AI can develop and verify a candidate version, that Tinnery can govern its activation, and that the existing CLI can use it without rewriting its business logic.
-
-**Principle:** Code may evolve continuously; executable status must be earned and explicitly governed.
+**Principle:** Let implementations evolve quickly; make execution observable, correctness verifiable, and activation explicitly governed.
