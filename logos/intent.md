@@ -36,9 +36,9 @@ Validate the following lifecycle through a small host CLI demonstration and a bo
 - Execution processes and results are sufficiently observable.
   执行过程及结果具有足够的可观察性。
 
-Formal acceptance of this Goal and its acceptance criteria are defined by the current-slice contract.
+The current-slice contract defines how this Goal will be validated. Acceptance of G-01 requires an explicit decision based on sufficient evidence from the validation process.
 
-本 Goal 的正式接受和验收标准由当前切片契约确定。
+当前切片契约定义如何验证本 Goal。接受 G-01 需要基于验证过程中的充分证据做出明确决策。
 
 ---
 

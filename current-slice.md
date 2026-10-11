@@ -6,6 +6,65 @@
 > **Related Goal:** G-01 — Validate the Shared Flow Lifecycle (`Candidate`)  
 > **Authority:** This document proposes an experiment; it does not itself accept G-01 or authorize production execution.
 
+---
+
+## Current Execution Authorization / 当前执行授权
+
+**Overall Slice Status / 整体切片状态:** Proposed / 提案中  
+**Related Goal / 相关目标:** G-01 — Candidate / 候选
+
+### Current Phase / 当前阶段: P1 — Host CLI Baseline / 宿主 CLI 基线
+
+**P1 Status / P1 状态:** Proposed / 提案中  
+**Authorization / 授权:** Not yet authorized for implementation / 尚未授权实施
+
+#### P1 Objective / P1 目标
+
+Establish a small, independently runnable SQLite contact-normalization CLI before designing the shared Flow protocol.
+
+在设计共享 Flow 协议之前，建立一个小型、可独立运行的 SQLite 联系人标准化 CLI。
+
+#### P1 Scope / P1 范围
+
+- `examples/contacts_cli/`
+- Directly related tests within the demonstration scope / 演示范围内的直接相关测试
+
+#### P1 Acceptance Criteria / P1 验收标准
+
+- Read synthetic contacts from a SQLite source / 从 SQLite 源读取合成联系人
+- Normalize records using a deterministic, independently testable function / 使用确定性、可独立测试的函数标准化记录
+- Write to a separate, disposable SQLite output database / 写入独立、可丢弃的 SQLite 输出数据库
+- Keep transformation logic independent of database access and persistence / 保持转换逻辑独立于数据库访问和持久化
+- Verify expected field values, keys, record counts, invalid-input behavior, repeated execution, and failure atomicity / 验证预期字段值、键、记录数、无效输入行为、重复执行和失败原子性
+- Provide reproducible run and test instructions / 提供可重现的运行和测试说明
+
+#### P1 Out of Scope / P1 范围外
+
+- Tinnery Flow protocol implementation / Tinnery Flow 协议实现
+- Version registry or candidate activation / 版本注册表或候选激活
+- Rollback mechanisms / 回滚机制
+- General-purpose scheduler or workflow UI / 通用调度器或工作流 UI
+
+---
+
+### Future Phases (Not Yet Authorized) / 未来阶段（尚未授权）
+
+**P2 — Shared Flow Protocol / 共享 Flow 协议:** Prove that the native CLI and Tinnery invoke the same business implementation through a shared versioned contract.
+
+证明原生 CLI 和 Tinnery 通过共享的版本化契约调用相同的业务实现。
+
+**P3 — Version Governance / 版本治理:** Verify candidate version isolation, independent acceptance, explicit activation, deactivation, rollback, and execution traceability.
+
+验证候选版本隔离、独立接受、显式激活、停用、回滚和执行可追溯性。
+
+---
+
+**Authorization Rule / 授权规则:** Passing P1 does not automatically authorize P2, P3, or acceptance of G-01. All phase transitions require explicit authorization.
+
+通过 P1 不会自动授权 P2、P3 或接受 G-01。所有阶段转换都需要明确授权。
+
+---
+
 ## 1. Objective
 
 Test whether one versioned business Flow can be invoked by both a host CLI and Tinnery through the same explicit contract, while Tinnery supports isolated candidate experimentation, independent verification, and controlled version activation and rollback.

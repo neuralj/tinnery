@@ -3,10 +3,11 @@
 > **Type / 类型:** Engineering projection / 工程投影
 > **Status / 状态:** Descriptive / 描述性
 > **Scope / 范围:** Project / 项目级
-> **Authority / 权威来源:** Tinnery engineering constraints / Tinnery 工程约束
+> **Authority / 权威来源:** Proposed engineering models / 提议的工程模型
 
-> Note: This is an engineering description, not semantic authority. System structure is constrained by Vision and Intent in logos/.
-> 注意：这是工程描述，不是语义权威。系统结构受 logos/ 中的 Vision 和 Intent 约束。
+> **Important / 重要:** This document describes proposed engineering models and constraints. Only explicitly accepted decisions (see `logos/decisions.md`) have normative force. Proposed architecture is not an accepted engineering contract.
+>
+> **重要：** 本文档描述提议的工程模型和约束。只有明确接受的决策（见 `logos/decisions.md`）才具有规范效力。提议的架构不是已接受的工程契约。
 
 ---
 
@@ -17,6 +18,8 @@
 ---
 
 ## Target Architecture / 目标架构
+
+**Status: Proposed / 状态：提议**
 
 Based on VISION.md and intent.md:
 基于 VISION.md 和 intent.md：
@@ -52,6 +55,8 @@ Activation / Rollback
 ---
 
 ## Engineering Constraints / 工程约束
+
+**Status: Proposed / 状态：提议**
 
 - Use Python standard library for P1 / P1 使用 Python 标准库
 - Synthetic test data only / 仅使用合成测试数据

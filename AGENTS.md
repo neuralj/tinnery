@@ -20,29 +20,64 @@ Tinnery 是 CLI 应用的共享 Flow 协议与治理层。
 
 ---
 
-## Logos — Semantic Authority / 语义权威
+## Governance Domains / 治理领域
+
+Tinnery's documentation is organized into four distinct semantic roles. These are not a precedence ranking; they serve different purposes and have different authority.
+
+Tinnery 的文档组织为四个不同的语义角色。这些不是优先级排序；它们服务于不同目的，具有不同权威。
+
+### 1. LOGOS — Semantic Authority / 语义权威
 
 `logos/` contains the project's semantic authority. These files define what Tinnery is, what it commits to, and what has been decided.
 
 `logos/` 包含项目的语义权威。这些文件定义了 Tinnery 是什么、承诺做什么、以及已做出的决策。
-
-### Entry Points / 入口点
 
 | File / 文件 | Purpose / 用途 | When to Read / 何时阅读 |
 |------------|---------------|------------------------|
 | `logos/VISION.md` | Long-term direction (Why) / 长期方向（为什么） | Before any design or review / 任何设计或审查之前 |
 | `logos/intent.md` | Current commitments (Will) / 当前承诺（意愿） | Before implementation / 实现之前 |
 | `logos/decisions.md` | Accepted decisions / 已接受的决策 | Before making architectural choices / 做架构选择之前 |
-| `logos/reality.md` | Current observed state (Is) / 当前观察状态（是什么） | Before claiming what exists / 声称某物存在之前 |
-| `logos/engineering.md` | Engineering constraints / 工程约束 | Before implementation / 实现之前 |
 
-### Reading Order / 阅读顺序
+### 2. REALITY — Observed Facts / 观察事实
 
-1. Start with `logos/VISION.md` to understand the long-term direction
-2. Read `logos/intent.md` to understand current commitments and constraints
-3. Check `logos/decisions.md` for accepted decisions
-4. Review `logos/reality.md` to understand current state
-5. Consult `logos/engineering.md` for engineering constraints
+`reality/` describes what exists or has been observed, with evidence.
+
+`reality/` 描述已存在或已观察到的内容，附带证据。
+
+| File / 文件 | Purpose / 用途 | When to Read / 何时阅读 |
+|------------|---------------|------------------------|
+| `reality/project.md` | Current observed state / 当前观察状态 | Before claiming what exists / 声称某物存在之前 |
+
+### 3. ENGINEERING — Scoped Contracts and Models / 工程契约与模型
+
+`engineering/` contains engineering constraints and proposed models. Only explicitly accepted decisions have normative force.
+
+`engineering/` 包含工程约束和提议的模型。只有明确接受的决策才具有规范效力。
+
+| File / 文件 | Purpose / 用途 | When to Read / 何时阅读 |
+|------------|---------------|------------------------|
+| `engineering/overview.md` | Proposed models and constraints / 提议的模型与约束 | Before implementation / 实现之前 |
+
+### 4. CHANGES — History (when needed) / 变更记录（需要时）
+
+Historical changes and verification evidence. Not created until needed.
+
+历史变更和验证证据。在需要之前不创建。
+
+---
+
+## Reading Order / 阅读顺序
+
+1. `logos/VISION.md` — Understand long-term direction / 理解长期方向
+2. `logos/intent.md` — Understand current commitments / 理解当前承诺
+3. `logos/decisions.md` — Check accepted decisions / 检查已接受决策
+4. `reality/project.md` — Understand current observed state / 理解当前观察状态
+5. `engineering/overview.md` — Review proposed models and constraints / 审查提议的模型与约束
+6. `current-slice.md` — Determine active task and authorization / 确定活跃任务与授权
+
+The reading order is navigation guidance, not a precedence ranking.
+
+阅读顺序是导航指导，不是优先级排序。
 
 ---
 
@@ -67,22 +102,19 @@ Tinnery 是 CLI 应用的共享 Flow 协议与治理层。
 
 ---
 
-## Authority Hierarchy / 权威层次
+## Authorization / 授权
 
-When documents conflict, resolve in this order:
+- `Proposed` does not authorize code modification.
+  `Proposed` 不授权代码修改。
 
-当文档冲突时，按以下顺序解决：
+- A phase marked as authorized grants permission only within its declared scope.
+  标记为已授权的阶段仅在其声明范围内授予权限。
 
-1. `logos/VISION.md` — Long-term direction / 长期方向
-2. `logos/intent.md` — Current commitments / 当前承诺
-3. `logos/decisions.md` — Accepted decisions / 已接受的决策
-4. `current-slice.md` — Current task authorization / 当前任务授权
-5. `logos/reality.md` — Observed state / 观察状态
-6. `logos/engineering.md` — Engineering constraints / 工程约束
+- P1 authorization does not authorize P2 or P3.
+  P1 授权不授权 P2 或 P3。
 
-These are semantic roles, not a precedence ranking. A `Proposed` slice does not override an `accepted` intent.
-
-这些是语义角色，不是优先级排序。`Proposed` 状态的切片不能覆盖 `accepted` 状态的 intent。
+- Agent instructions cannot accept a project Goal or Decision on behalf of the project.
+  Agent 指令不能代表项目接受项目目标或决策。
 
 ---
 
@@ -90,11 +122,11 @@ These are semantic roles, not a precedence ranking. A `Proposed` slice does not 
 
 ### Agent May / Agent 可以
 
-- Read all files in `logos/` and `current-slice.md`
+- Read all files in `logos/`, `reality/`, `engineering/`, and `current-slice.md`
 - Propose changes to `current-slice.md` (requires human acceptance)
 - Implement code within the authorized scope of an `Active` phase
 - Generate evidence (test results, execution logs)
-- Update `logos/reality.md` with observed facts (with evidence)
+- Update `reality/project.md` with observed facts (with evidence)
 - Report conflicts between documents
 
 ### Agent May Not / Agent 不可以
@@ -133,9 +165,9 @@ These are semantic roles, not a precedence ranking. A `Proposed` slice does not 
 |------------|------------------|
 | Understand project direction / 理解项目方向 | `logos/VISION.md` |
 | Understand current commitments / 理解当前承诺 | `logos/intent.md` |
-| Check what has been decided / 检查已决策内容 | `logos/decisions.md` |
-| Understand current state / 理解当前状态 | `logos/reality.md` |
-| Understand engineering constraints / 理解工程约束 | `logos/engineering.md` |
+| Check accepted decisions / 检查已接受决策 | `logos/decisions.md` |
+| Understand current state / 理解当前状态 | `reality/project.md` |
+| Review engineering models / 审查工程模型 | `engineering/overview.md` |
 | Start implementation / 开始实现 | `current-slice.md` |
 | Resolve semantic conflict / 解决语义冲突 | Stop and report / 停止并报告 |
 
@@ -180,6 +212,8 @@ The current structure is minimal:
 ```
 tinnery/
 ├── logos/           # Semantic authority / 语义权威
+├── reality/         # Observed facts / 观察事实
+├── engineering/     # Engineering models / 工程模型
 ├── current-slice.md # Current task / 当前任务
 ├── AGENTS.md        # Agent instructions / Agent 指令
 ├── README.md        # Project introduction / 项目介绍
