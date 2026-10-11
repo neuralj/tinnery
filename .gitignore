@@ -55,3 +55,6 @@ htmlcov/
 
 # uv
 .uv/
+
+# Workbuddy
+.workbuddy/
