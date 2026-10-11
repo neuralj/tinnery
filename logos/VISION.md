@@ -1,48 +1,15 @@
 # Tinnery — Vision
 
-## Purpose
+Tinnery provides a shared Flow protocol and governance layer for CLI applications.
 
-Tinnery is a FlowHub that constrains, executes, verifies, and version-controls AI-assisted engineering work.
+A business Flow remains owned by its host application while becoming discoverable and executable by Tinnery through the same explicit protocol. Business logic is defined once, not duplicated between the CLI and Flow Hub.
 
-It enables CLI applications to delegate bounded engineering tasks to Tinnery, where AI can experiment, develop, and verify candidate implementations in isolation. Accepted artifacts are then returned to the host CLI through a shared protocol.
+Multiple implementations of a Flow may coexist. Tinnery governs their AI-assisted development, isolated experimentation, independent verification, activation, and retirement. Only explicitly accepted versions are eligible for governed execution.
 
-## Core Idea
+The host CLI and Tinnery must resolve implementations through the same versioned contract and execution boundary, allowing governed upgrades and rollbacks without duplicating business logic.
 
-**Host Application (CLI)** ↔ **Tinnery (FlowHub)**
+Tinnery governs only operations routed through this boundary; it does not automatically control arbitrary code or side effects outside enforced runtime constraints.
 
-- **CLI** owns business logic, data, and production operations
-- **Tinnery** manages the engineering lifecycle: intent → scope → isolated experiment → verification → accepted artifact
-- **Shared Protocol** allows CLI's transformation logic to be seamlessly loaded, executed, and versioned by Tinnery
+The first demonstration will prove that AI can develop and verify a candidate version, that Tinnery can govern its activation, and that the existing CLI can use it without rewriting its business logic.
 
-The host application retains ownership. Tinnery delivers verified, versioned artifacts—not uncontrolled code changes.
-
-## First Demonstration
-
-A simple SQLite CLI that reads a contact table and produces a normalized contact table.
-
-The demonstration validates:
-- Can Tinnery constrain AI's experiment scope?
-- Can candidate code be developed in isolation?
-- Can results be independently verified?
-- Can accepted artifacts be returned to CLI through explicit interfaces?
-- Can the same artifact be reproducibly executed?
-
-## Boundaries
-
-**Does:**
-- Manage bounded engineering flows
-- Isolate AI experiments from production
-- Verify results independently
-- Deliver versioned, accepted artifacts
-
-**Does Not (initially):**
-- Universal multi-database framework
-- General-purpose DAG scheduler
-- Automatic production deployment
-- Require Dagster or other execution platforms
-
-## Guiding Principle
-
-**Constrain the experiment, verify the result, preserve the evidence, release only accepted artifacts.**
-
-Architecture grows only when evidence demands it.
+**Principle:** Code may evolve continuously; executable status must be earned and explicitly governed.
