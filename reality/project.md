@@ -3,7 +3,7 @@
 > **Type / 类型:** Reality / 现实
 > **Status / 状态:** Observed facts / 观察事实
 > **Scope / 范围:** Project / 项目级
-> **Observed Revision / 观察版本:** 86afc44a0fb486af92bec1406a0ff2dff599fd08
+> **Observed Revision / 观察版本:** 9e524451376d263779afbc5de7a99d4f9cb28df4
 > **Observation Time / 观察时间:** 2026-10-12
 > **Source / 来源:** Repository inspection / 仓库检查
 
@@ -127,10 +127,10 @@ tinnery/
 
 ### Phase Status / 阶段状态
 
-- **P1 — Host CLI Baseline:** Active / 进行中 (CURRENT)
+- **P1 — Host CLI Baseline:** Completed / 已完成 (CURRENT)
   - Implementation completed / 实现完成
-  - CI workflow configured / CI 工作流已配置
-  - Awaiting CI verification / 等待 CI 验证
+  - CI workflow configured and verified / CI 工作流已配置并验证
+  - All acceptance criteria met / 所有验收标准已满足
 - **P2 — Shared Flow Protocol:** Not yet authorized / 尚未授权 (CURRENT)
 - **P3 — Version Governance:** Not yet authorized / 尚未授权 (CURRENT)
 
@@ -146,11 +146,10 @@ tinnery/
 
 ## Unverified Claims / 未验证声明
 
-- No runtime behavior has been verified beyond local testing.
+- No runtime behavior has been verified beyond local and CI testing.
 - No deployment or production use has occurred.
 - P2 and P3 have not been implemented or validated.
 - The target architecture described in `engineering/overview.md` is proposed, not fully implemented.
-- CI workflow has not yet been verified in cloud environment.
 
 ---
 
@@ -207,3 +206,21 @@ INFO: Successfully processed 5 contacts
 **Read-only source enforcement:**
 - Source database opened with `?mode=ro` URI parameter
 - Attempting to write to source database raises `sqlite3.OperationalError: attempt to write a readonly database`
+
+**CI verification (cloud):**
+- Run ID: 38191275154
+- Status: success
+- Duration: 13s
+- Trigger: push to main
+- Commit: 86afc44a0fb486af92bec1406a0ff2dff599fd08
+- Runner: ubuntu-latest (GitHub-hosted)
+- Test result: 13 passed in 0.13s
+- URL: https://github.com/neuralj/tinnery/actions/runs/38191275154
+
+CI workflow verified:
+- ✅ Runs on GitHub-hosted runner (not self-hosted)
+- ✅ Uses minimal permissions (contents: read)
+- ✅ No credentials injected
+- ✅ No deployment or activation
+- ✅ Tests pass in cloud environment
+- ✅ Locked dependencies enforced (--locked flag)
