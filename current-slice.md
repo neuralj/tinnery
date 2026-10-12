@@ -57,13 +57,58 @@ Establish a small, independently runnable SQLite contact-normalization CLI befor
 
 ### Future Phases (Not Yet Authorized) / 未来阶段（尚未授权）
 
-**P2 — Shared Flow Protocol / 共享 Flow 协议:** Prove that the native CLI and Tinnery invoke the same business implementation through a shared versioned contract.
-
-证明原生 CLI 和 Tinnery 通过共享的版本化契约调用相同的业务实现。
-
 **P3 — Version Governance / 版本治理:** Verify candidate version isolation, independent acceptance, explicit activation, deactivation, rollback, and execution traceability.
 
 验证候选版本隔离、独立接受、显式激活、停用、回滚和执行可追溯性。
+
+---
+
+### Current Phase / 当前阶段: P2 — Shared Flow Protocol / 共享 Flow 协议
+
+**P2 Status / P2 状态:** Active / 进行中  
+**Authorization / 授权:** Authorized — P2 scope only / 已授权 — 仅限 P2 范围  
+**Start Time / 开始时间:** 2026-10-12
+
+#### P2 Objective / P2 目标
+
+Prove that the native CLI and Dagster invoke the same business implementation through a shared versioned contract, with Tinnery Core providing Flow identity, invocation protocol, and execution evidence.
+
+证明原生 CLI 和 Dagster 通过共享的版本化契约调用相同的业务实现，Tinnery Core 提供 Flow 身份、调用协议和执行证据。
+
+#### P2 Scope / P2 范围
+
+- `tinnery/` — Tinnery Core Library (Flow contracts, invocation protocol, provider interface, execution evidence)
+  Tinnery Core 库（Flow 契约、调用协议、Provider 接口、执行证据）
+- `tinnery/dagster/` — Dagster Integration (Resources, Ops, Jobs)
+  Dagster 集成（Resources、Ops、Jobs）
+- `demos/contacts_cli/` — Host CLI integration with Tinnery Core
+  宿主 CLI 与 Tinnery Core 的集成
+- `tests/` — Verification tests for dual-entry shared implementation
+  双入口共享实现的验证测试
+- `engineering/flow-contract.md` — Flow Contract specification
+  Flow 契约规范
+
+#### P2 Acceptance Criteria / P2 验收标准
+
+- Define Flow identity and contract (flow_id, version, contract_version)
+  定义 Flow 身份与契约（flow_id、version、contract_version）
+- Define typed invocation request and result
+  定义类型化调用请求与结果
+- Host CLI invokes business implementation through Tinnery Core
+  宿主 CLI 通过 Tinnery Core 调用业务实现
+- Dagster invokes the same business implementation through Dagster Integration
+  Dagster 通过 Dagster Integration 调用相同的业务实现
+- Both entries record execution evidence (flow_id, version, implementation_hash)
+  两个入口都记录执行证据（flow_id、version、implementation_hash）
+- Verify no duplicate business implementation
+  验证没有重复业务实现
+
+#### P2 Out of Scope / P2 范围外
+
+- Version registry or candidate activation / 版本注册表或候选激活
+- Rollback mechanisms / 回滚机制
+- Plugin frameworks (Entry Points, Pluggy, Stevedore) / 插件框架
+- Generic scheduler or workflow UI / 通用调度器或工作流 UI
 
 ---
 

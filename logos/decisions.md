@@ -44,19 +44,14 @@ A conflict is a condition requiring resolution; it must not silently override an
 
 ## Accepted Decisions / 已接受的决策
 
-（暂无）
-
----
-
-## Candidate Decisions / 候选决策
-
 ### D-001 — Use Dagster as Tinnery's Initial Operator-Facing Entry Point / 采用 Dagster 作为 Tinnery 的初始操作入口
 
 > **Type / 类型:** Decision
-> **Lifecycle / 生命周期:** candidate / 候选
-> **Realization / 实现状态:** unverified / 未验证
+> **Lifecycle / 生命周期:** accepted / 已接受
+> **Realization / 实现状态:** partial / 部分实现（P2 进行中）
 > **Scope / 范围:** project / 项目级
 > **Proposed / 提议时间:** 2026-10-12
+> **Accepted / 接受时间:** 2026-10-12
 
 **Statement / 陈述:**
 
@@ -84,10 +79,10 @@ Use Dagster as the operation entry point for Tinnery's first version, rather tha
 - Leverage Dagster's UI, scheduling, and execution monitoring / 利用 Dagster 的 UI、调度和执行监控
 - Focus Tinnery on core protocol and governance / 让 Tinnery 专注于核心协议和治理
 
-**Proposed P2 Direction / 提议的 P2 方向:**
+**P2 Authorization / P2 授权:**
 
-Pending acceptance of D-001 and explicit P2 authorization, the proposed direction is:
-在 D-001 被接受和 P2 被明确授权之前，提议的方向是：
+P2 has been explicitly authorized to implement:
+P2 已被明确授权实施：
 
 - Tinnery Core Library: Flow contracts, version identity, invocation protocol, governance & evidence
   Tinnery Core 库：Flow 契约、版本身份、调用协议、治理与证据
@@ -98,7 +93,10 @@ Pending acceptance of D-001 and explicit P2 authorization, the proposed directio
 - Host Provider: Invoke host-owned business implementations without duplicating business logic
   宿主 Provider：调用宿主拥有的实际业务实现，不复制业务逻辑
 
-This direction is proposed, not yet accepted or authorized.
-此方向是提议，尚未被接受或授权。
+**Status / 状态:** Accepted — P2 implementation in progress / 已接受 — P2 实施中
 
-**Status / 状态:** Candidate — requires explicit acceptance before P2 implementation / 候选 — 需要明确接受后才能实施 P2
+---
+
+## Candidate Decisions / 候选决策
+
+（暂无）
