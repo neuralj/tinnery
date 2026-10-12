@@ -31,7 +31,7 @@ Unit (Capability Boundary)
 1. Navigate to the contacts-cli directory:
 
 ```bash
-cd contacts_cli
+cd demos/contacts_cli
 ```
 
 2. Install dependencies:
@@ -62,7 +62,7 @@ python3 -c "import sqlite3; conn = sqlite3.connect('output.sqlite'); cursor = co
 ### Run Tests
 
 ```bash
-cd contacts_cli
+cd demos/contacts_cli
 uv run pytest -v
 ```
 

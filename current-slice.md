@@ -15,8 +15,8 @@
 
 ### Current Phase / 当前阶段: P1 — Host CLI Baseline / 宿主 CLI 基线
 
-**P1 Status / P1 状态:** Proposed / 提案中  
-**Authorization / 授权:** Not yet authorized for implementation / 尚未授权实施
+**P1 Status / P1 状态:** Active / 进行中  
+**Authorization / 授权:** Authorized — P1 scope only / 已授权 — 仅限 P1 范围
 
 #### P1 Objective / P1 目标
 
@@ -26,8 +26,10 @@ Establish a small, independently runnable SQLite contact-normalization CLI befor
 
 #### P1 Scope / P1 范围
 
-- `examples/contacts_cli/`
+- `demos/contacts_cli/`
+- `.github/workflows/ci.yml` — CI verification infrastructure / CI 验证基础设施
 - Directly related tests within the demonstration scope / 演示范围内的直接相关测试
+- Necessary governance document updates / 必要的治理文档更新
 
 #### P1 Acceptance Criteria / P1 验收标准
 
@@ -73,7 +75,7 @@ The experiment must test the shared protocol and governance boundary—not merel
 
 ## 2. Demonstration Host
 
-Create a small contact-normalization CLI under `examples/contacts_cli/` in the Tinnery repository.
+Create a small contact-normalization CLI under `demos/contacts_cli/` in the Tinnery repository.
 
 This is an explicit demonstration-only host application colocated with Tinnery to reduce setup cost. It is not part of the Tinnery core package and does not imply that future host CLIs must share the same repository or deployment.
 
@@ -152,7 +154,7 @@ The demo may use the smallest mechanism sufficient to test the protocol. Any mec
 
 ## 7. Constraints
 
-- Domain logic remains owned by `examples/contacts_cli/`.
+- Domain logic remains owned by `demos/contacts_cli/`.
 - The transformation receives data and returns data; database access and persistence remain outside it.
 - The candidate must not receive unrestricted source/target database handles through the transformation interface.
 - Source access is read-only; candidate writes are restricted to disposable output.

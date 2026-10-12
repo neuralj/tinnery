@@ -15,8 +15,11 @@ def read_contacts(db_path: str) -> list[dict[str, Any]]:
         Input: path to source SQLite database
         Output: list of contact dicts with keys contact_id, full_name, email
         Errors: Raises sqlite3.Error on database failures
+
+    The source database is opened in read-only mode to enforce isolation.
     """
-    conn = sqlite3.connect(db_path)
+    # Use URI mode with read-only flag to enforce source isolation
+    conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
 
     try:
