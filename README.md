@@ -19,10 +19,10 @@ Tinnery is a shared Flow protocol and governance layer for CLI applications.
 Host CLI ──► Task ──► Tinnery Core ◄── Dagster Op/Job
                           │
                           ▼
-              BoundFlow (host-owned)
+              Host-created BoundFlow
                           │
                           ▼
-              Business implementation (single source)
+              Host-owned implementation
 ```
 
 - **Tinnery Core** (`tinnery/`): Flow contracts (`FlowContract`), implementation binding (`bind_flow`), execution (`Executor`), receipts (`ExecutionReceipt`), independent verification (`verify_output`), and evidence journaling (`EvidenceJournal`). Independent of Dagster.
@@ -47,8 +47,7 @@ uv run contacts-cli create-sample input.sqlite
 uv run contacts-cli run input.sqlite output.sqlite
 ```
 
-The `run` command executes `contacts.normalize` through Tinnery Core and logs the
-execution evidence (`trace_id`, `evidence_hash`).
+The `run` command executes `contacts.normalize` through Tinnery Core and logs the execution receipt (`invocation_id`, `contract_sha256`, `implementation_sha256`). Receipts are generated in memory but not persisted to disk by default.
 
 ### Run Tests
 

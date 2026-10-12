@@ -126,6 +126,16 @@ class ImplementationIdentity:
 The bytecode digest exists to catch modifications invisible in source text — dynamic `exec`,
 decorator rewriting.
 
+**Implementation identity semantics / 实现身份语义：**
+
+`implementation_sha256` represents **source-level identity**: it combines entrypoint, source module digest, and dependency manifest. It does **not** include `callable_code_sha256`. This is intentional: source-level identity captures the declared implementation, while bytecode-level changes are tracked separately.
+
+`implementation_sha256` 表示**源码级身份**：它组合入口点、源文件摘要和依赖清单。它**不**包含 `callable_code_sha256`。这是有意为之：源码级身份捕获声明的实现，而字节码级变化单独追踪。
+
+Runtime drift detection compares the **full** `ImplementationIdentity` dataclass, not just `implementation_sha256`. This means bytecode-level changes are still detected, even though they don't affect the source-level digest.
+
+运行时漂移检测比较**完整的** `ImplementationIdentity` 数据类，而非仅 `implementation_sha256`。这意味着字节码级变化仍会被检测到，即使它们不影响源码级摘要。
+
 ### 3.2 Path exclusion / 排除路径
 
 The absolute checkout path is **deliberately not part of the identity**.

@@ -16,11 +16,11 @@
 > **Current state / 当前状态（2026-10-12 更新）:**
 > Commit `5f7334d` migrated to the `bind_flow` + independent-verification design. Core API:
 > `FlowContract`, `bind_flow`, `Executor`, `ExecutionReceipt`, `verify_output`, `VerificationRecord`.
-> 26 root tests + 13 demo tests passing. CI verified (run 38208967379).
+> 26 root tests + 13 demo tests passing. CI verified (run 38234842585 for commit 5f7334d).
 >
 > 提交 `5f7334d` 已迁移到 `bind_flow` + 独立验证设计。Core API：`FlowContract`、`bind_flow`、
 > `Executor`、`ExecutionReceipt`、`verify_output`、`VerificationRecord`。26 个根测试 + 13 个演示测试通过。
-> CI 已验证（run 38208967379）。
+> CI 已验证（run 38234842585 对应提交 5f7334d）。
 
 ---
 
@@ -119,33 +119,49 @@ Ensure that the facts expressed by core records match actual execution, establis
 
 确保核心记录表达的事实与实际执行一致，为后续治理建立可信的证据基础。
 
-#### Identified Issues / 已识别问题
+#### Issues and Clarifications / 问题与澄清
 
-1. `implementation_sha256` does not include `callable_code_sha256` (`identity.py:64-69`)
-   `implementation_sha256` 未包含 `callable_code_sha256`
-2. Drift receipt uses bind-time identity instead of observed identity (`runtime.py:114-117 vs 144-160`)
-   身份漂移回执使用绑定身份而非观察身份
-3. Verification does not check output consistency with `output_sha256` (`verification.py:70`)
-   验证时未检查输出是否与 `output_sha256` 一致
-4. Host `tasks.py` does not pass `EvidenceJournal`, receipts not persisted (`tasks.py:37`)
-   宿主 `tasks.py` 未传入 `EvidenceJournal`，回执未持久化
+**Issue 1 — Design Clarification / 设计澄清:**
+
+`implementation_sha256` represents source-level identity (entrypoint + source + manifest); `callable_code_sha256` is a separate field for bytecode-level changes. Runtime compares full `ImplementationIdentity`, not just `implementation_sha256`. This is consistent with `engineering/flow-contract.md` §3. No code change required.
+
+`implementation_sha256` 表示源码级身份（入口点 + 源文件 + 清单）；`callable_code_sha256` 是独立字段，用于捕获字节码级变化。运行时比较完整的 `ImplementationIdentity`，而非仅 `implementation_sha256`。这与 `engineering/flow-contract.md` §3 一致。无需代码修改。
+
+**Issue 2 — Drift Receipt Information / 身份漂移回执信息:**
+
+Drift receipt uses bind-time identity instead of observed identity (`runtime.py:114-117 vs 144-160`). Receipt should distinguish bind-time identity from observed identity to support diagnosis.
+
+身份漂移回执使用绑定身份而非观察身份。回执应区分绑定身份和观察身份以支持诊断。
+
+**Issue 3 — Output Consistency Verification / 输出一致性验证:**
+
+Verification does not check output consistency with `output_sha256` (`verification.py:70`). Verifier should receive output that matches the receipt's digest; if modified, verification should fail.
+
+验证时未检查输出是否与 `output_sha256` 一致。验证器应接收与回执摘要匹配的输出；若已修改，验证应失败。
+
+**Issue 4 — Known Limitation (Not in This Slice) / 已知限制（不在本切片范围）:**
+
+Host `tasks.py` does not pass `EvidenceJournal`, receipts not persisted (`tasks.py:37`). This slice documents the limitation; actual persistence implementation deferred to a future slice. Receipts generated in memory are not audit records.
+
+宿主 `tasks.py` 未传入 `EvidenceJournal`，回执未持久化。本切片记录此限制；实际持久化实现推迟到未来切片。内存中生成的回执不是审计记录。
 
 #### Scope / 范围
 
 **Allowed modifications / 允许修改：**
-- `tinnery/identity.py` — fix `implementation_sha256` computation / 修正 `implementation_sha256` 计算
 - `tinnery/runtime.py` — preserve observed identity in drift receipt / 在漂移回执中保留观察到的身份
 - `tinnery/verification.py` — check output consistency before verification / 验证时检查输出一致性
 - New test files covering the above fixes / 新增测试文件覆盖上述修正
 
 **Not in scope / 不在范围内：**
+- `tinnery/identity.py` — no change needed (Issue 1 is design clarification) / 无需修改（Issue 1 是设计澄清）
+- `demos/contacts_cli/contacts_cli/tasks.py` — persistence deferred (Issue 4 is known limitation) / 持久化推迟（Issue 4 是已知限制）
 - Registry, AgentJournal, sandbox, version activation / 不实现 Registry、AgentJournal、沙箱、版本激活
 - Modify FlowContract or bind_flow semantics / 不修改 FlowContract 或 bind_flow 语义
 - Expand Dagster integration / 不扩建 Dagster 集成
 
 #### Acceptance Criteria / 验收标准
 
-1. `implementation_sha256` composition is explicit and test-protected / `implementation_sha256` 的组成明确且有测试保护
+1. ~~`implementation_sha256` composition is explicit and test-protected~~ — **Clarified in documentation / 已在文档中澄清**
 2. Drift receipt distinguishes bind-time identity from observed identity / 身份漂移时回执能够区分绑定身份和观测身份
 3. Output passed to verifier must match receipt's output digest / 交给验证器的输出必须与回执记录的输出摘要对应
 4. Evidence persistence status is explicit, does not imply unaudited receipts form audit records / 证据持久化状态明确，不暗示未持久化的回执已形成审计记录

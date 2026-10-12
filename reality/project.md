@@ -3,8 +3,9 @@
 > **Type / 类型:** Reality / 现实
 > **Status / 状态:** Observed facts / 观察事实
 > **Scope / 范围:** Project / 项目级
-> **Observed Revision / 观察版本:** 5f7334d72a30a6cb40cf2864b81020a3c99eb7b9 (HEAD)
-> **Observation Time / 观察时间:** 2026-10-12 15:00 GMT+8
+> **Repository HEAD / 仓库 HEAD:** 05ee95972a30a6cb40cf2864b81020a3c99eb7b9
+> **Code / Test Baseline / 代码与测试基线:** 5f7334d72a30a6cb40cf2864b81020a3c99eb7b9
+> **Observation Time / 观察时间:** 2026-10-12 19:32 GMT+8
 > **Source / 来源:** `git status`, `git log`, 测试执行, CI 验证 / git commands, test execution, CI verification
 
 ---
@@ -14,9 +15,9 @@
 **Repository:** tinnery
 **Remote:** https://github.com/neuralj/tinnery
 **Language:** Python 3.14 (host venv)
-**Status:** P2 completed at commit `5f7334d`. Core API migrated to `bind_flow` + independent-verification design. 26 root tests + 13 demo tests passing. CI verified. Post-P2 Slice A proposed but not yet authorized.
+**Status:** P2 completed at code baseline `5f7334d`. Current repository HEAD is `05ee959` (governance docs only). 26 root tests + 13 demo tests passing. CI verified (run 38234842585 for commit 5f7334d). Post-P2 Slice A proposed but not yet authorized.
 
-**当前状态：** P2 在提交 `5f7334d` 完成。Core API 已迁移到 `bind_flow` + 独立验证设计。26 个根测试 + 13 个演示测试通过。CI 已验证。Post-P2 Slice A 已提案但尚未授权。
+**当前状态：** P2 在代码基线 `5f7334d` 完成。当前仓库 HEAD 为 `05ee959`（仅治理文档）。26 个根测试 + 13 个演示测试通过。CI 已验证（run 38234842585 对应提交 5f7334d）。Post-P2 Slice A 已提案但尚未授权。
 
 ---
 
@@ -73,7 +74,7 @@ tinnery/
 
 **Code:** `bind_flow` + independent verification design present in `tinnery/` / `bind_flow` + 独立验证设计已存在于 `tinnery/`
 **Tests:** 26 root tests + 13 demo tests passing / 26 个根测试 + 13 个演示测试通过
-**CI:** Verified on GitHub Actions (run 38208967379, commit 5f7334d) / 已在 GitHub Actions 验证
+**CI:** Verified on GitHub Actions (run 38234842585, commit 5f7334d) / 已在 GitHub Actions 验证
 **Deployment:** Not deployed; no Dagster instance runs / 未部署；无运行中的 Dagster 实例
 
 ### Post-P2 Slice A Status / Post-P2 Slice A 状态
@@ -82,17 +83,20 @@ tinnery/
 
 **Identified issues / 已识别问题：**
 
-1. `implementation_sha256` does not include `callable_code_sha256` (`identity.py:64-69`)
-   `implementation_sha256` 未包含 `callable_code_sha256`
+1. ~~`implementation_sha256` does not include `callable_code_sha256` (`identity.py:64-69`)~~ — **Design clarification / 设计澄清**: `implementation_sha256` represents source-level identity (entrypoint + source + manifest); `callable_code_sha256` is a separate field for bytecode-level changes. Runtime compares full `ImplementationIdentity`, not just `implementation_sha256`. See `engineering/flow-contract.md` §3.
+   ~~`implementation_sha256` 未包含 `callable_code_sha256`~~ — **设计澄清**：`implementation_sha256` 表示源码级身份（入口点 + 源文件 + 清单）；`callable_code_sha256` 是独立字段，用于捕获字节码级变化。运行时比较完整的 `ImplementationIdentity`，而非仅 `implementation_sha256`。见 `engineering/flow-contract.md` §3。
+
 2. Drift receipt uses bind-time identity instead of observed identity (`runtime.py:114-117 vs 144-160`)
    身份漂移回执使用绑定身份而非观察身份
+
 3. Verification does not check output consistency with `output_sha256` (`verification.py:70`)
    验证时未检查输出是否与 `output_sha256` 一致
-4. Host `tasks.py` does not pass `EvidenceJournal`, receipts not persisted (`tasks.py:37`)
-   宿主 `tasks.py` 未传入 `EvidenceJournal`，回执未持久化
 
-**Next step / 下一步：** Wait for explicit authorization. If authorized, add failing tests first, then make minimal code fixes.
-等待明确授权。如获授权，先补失败测试，再做最小代码修正。
+4. ~~Host `tasks.py` does not pass `EvidenceJournal`, receipts not persisted (`tasks.py:37`)~~ — **Known limitation (not in this slice) / 已知限制（不在本切片范围）**: Receipts are generated in memory but not persisted. This slice documents the limitation; actual persistence implementation deferred to a future slice.
+   ~~宿主 `tasks.py` 未传入 `EvidenceJournal`，回执未持久化~~ — **已知限制（不在本切片范围）**：回执在内存中生成但未持久化。本切片记录此限制；实际持久化实现推迟到未来切片。
+
+**Next step / 下一步：** Wait for explicit authorization. If authorized, add failing tests first, then make minimal code fixes for Issues 2 and 3 only.
+等待明确授权。如获授权，先补失败测试，再仅针对 Issue 2 和 Issue 3 做最小代码修正。
 
 ### Current Core API / 当前 Core API
 
