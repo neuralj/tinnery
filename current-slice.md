@@ -114,6 +114,22 @@ Prove that the native CLI and Dagster invoke the same business implementation th
 
 验证候选版本隔离、独立接受、显式激活、停用、回滚和执行可追溯性。
 
+**Sub-direction: AI Agent Assessment / 子方向：AI Agent 评估机制**
+
+In AI-driven development workflows, the AI agent itself can provide assessment and feedback on Flow execution results, complementing code-based verification. This requires a mechanism to record AI agent assessments as a third type of evidence alongside `ExecutionReceipt` and `VerificationRecord`.
+
+在 AI 驱动的开发工作流中，AI agent 本身可以对 Flow 执行结果提供评估和反馈，作为代码验证的补充。这需要一种机制来记录 AI agent 的评估，作为与 `ExecutionReceipt` 和 `VerificationRecord` 并列的第三类证据。
+
+Proposed design / 提议的设计：
+- `AgentAssessment` record: links to `invocation_id`, includes agent identity, natural language summary, confidence score, findings, and recommendations
+  `AgentAssessment` 记录：关联到 `invocation_id`，包含 agent 身份、自然语言总结、置信度、发现和建议
+- Storage: extend `EvidenceJournal` or create independent `AgentJournal`
+  存储：扩展 `EvidenceJournal` 或创建独立的 `AgentJournal`
+- Trigger: AI agent invokes assessment after execution, or automatically triggered post-execution
+  触发：AI agent 在执行后调用评估，或执行后自动触发
+- Relationship to verification: AI assessment is complementary to code verification, not a replacement
+  与验证的关系：AI 评估是对代码验证的补充，而非替代
+
 **Blocking prerequisite / 阻塞前置条件:** §7 of the reference prototype's research notes asks what threat
 model applies to candidate execution (accidental bug, prompt-injected code, or actively malicious
 code). Until that is answered, "isolation" cannot be claimed for any execution path.
