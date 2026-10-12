@@ -3,7 +3,7 @@
 > **Type / 类型:** Reality / 现实
 > **Status / 状态:** Observed facts / 观察事实
 > **Scope / 范围:** Project / 项目级
-> **Observed Revision / 观察版本:** 9e524451376d263779afbc5de7a99d4f9cb28df4
+> **Observed Revision / 观察版本:** 5326887982e8fc0a9cbd9a1f4c05463f6b7dbce5
 > **Observation Time / 观察时间:** 2026-10-12
 > **Source / 来源:** Repository inspection / 仓库检查
 
@@ -129,8 +129,8 @@ tinnery/
 
 - **P1 — Host CLI Baseline:** Completed / 已完成 (CURRENT)
   - Implementation completed / 实现完成
-  - CI workflow configured and verified / CI 工作流已配置并验证
-  - All acceptance criteria met / 所有验收标准已满足
+  - CI workflow configured and verified (push events) / CI 工作流已配置并验证（push 事件）
+  - PR trigger and failure scenario not yet verified / PR 触发和失败场景尚未验证
 - **P2 — Shared Flow Protocol:** Not yet authorized / 尚未授权 (CURRENT)
 - **P3 — Version Governance:** Not yet authorized / 尚未授权 (CURRENT)
 
@@ -141,6 +141,19 @@ tinnery/
 **G-01:** Validate the Shared Flow Lifecycle
 **Status:** Candidate / 候选 (CURRENT)
 **Acceptance:** Requires explicit decision after full validation / 需要完整验证后明确决策 (CURRENT)
+
+---
+
+## Recent Governance Changes / 近期治理变更
+
+**D-001 (Candidate):** Use Dagster as Tinnery's Initial Operator-Facing Entry Point
+D-001（候选）：采用 Dagster 作为 Tinnery 的初始操作入口
+
+This is a proposed direction, not yet accepted. Requires explicit acceptance before P2 implementation.
+这是提议方向，尚未被接受。需要在 P2 实施前明确接受。
+
+See `logos/decisions.md` for details.
+详见 `logos/decisions.md`。
 
 ---
 
@@ -217,10 +230,14 @@ INFO: Successfully processed 5 contacts
 - Test result: 13 passed in 0.13s
 - URL: https://github.com/neuralj/tinnery/actions/runs/38191275154
 
-CI workflow verified:
+**Verified:**
 - ✅ Runs on GitHub-hosted runner (not self-hosted)
 - ✅ Uses minimal permissions (contents: read)
 - ✅ No credentials injected
 - ✅ No deployment or activation
 - ✅ Tests pass in cloud environment
 - ✅ Locked dependencies enforced (--locked flag)
+
+**Not Yet Verified / 尚未验证:**
+- ❌ PR trigger: no pull_request event runs observed
+- ❌ Failure scenario: no intentional failure test observed

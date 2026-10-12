@@ -13,7 +13,13 @@
 
 ## Current Systems / 当前系统
 
-**Status:** No systems implemented yet / 暂无系统实现
+**Status:** P1 demonstration completed / P1 演示已完成
+
+- **demos/contacts_cli/**: Contact normalization CLI with CLI → Task → Unit architecture
+  - 13 tests passing locally / 本地 13 个测试通过
+  - CI verified on GitHub Actions (push events) / CI 在 GitHub Actions 上验证（push 事件）
+  - Read-only source database enforced via SQLite URI mode / 通过 SQLite URI 模式强制只读源数据库
+  - Uses Typer for CLI framework and UV for dependency management / 使用 Typer 作为 CLI 框架，UV 进行依赖管理
 
 ---
 
@@ -21,36 +27,31 @@
 
 **Status: Proposed / 状态：提议**
 
-Based on VISION.md and intent.md:
-基于 VISION.md 和 intent.md：
-
-### Core Components / 核心组件
-
-1. **Tinnery Core Package** (`tinnery/`)
-   - Flow protocol implementation / Flow 协议实现
-   - Version governance / 版本治理
-   - Independent verification / 独立验证
-
-2. **Demonstration Host** (`examples/contacts_cli/`)
-   - Contact normalization CLI / 联系人标准化 CLI
-   - Domain logic ownership / 领域逻辑所有权
-   - SQLite I/O / SQLite 读写
-
-### Data Flow / 数据流
+### Dual-Entry Structure / 双入口结构
 
 ```
-CLI Demo
-    ↓
-Tinnery Core (shared protocol)
-    ↓
-Version Resolution
-    ↓
-Business Implementation (V1/V2)
-    ↓
-Independent Verification
-    ↓
-Activation / Rollback
+                    Dagster UI (Operation Entry / 操作入口)
+                        |
+                Dagster Integration (Mapping Layer / 映射层)
+                        |
+Host CLI -------- Tinnery Core Contract (Shared Protocol / 共享协议)
+                        |
+                 Typed Provider (Invocation Boundary / 调用边界)
+                        |
+              Host Business Implementation (Domain Logic / 领域逻辑)
 ```
+
+This diagram expresses shared invocation contracts, not that all invocations must go through Dagster.
+此图表达的是调用契约共享，而不是所有调用都必须经过 Dagster。
+
+### Component Responsibilities / 组件职责
+
+| Component / 组件 | Responsible For / 负责 | Not Responsible For / 不负责 |
+|-----------------|------------------------|------------------------------|
+| Dagster | UI, scheduling, execution monitoring, run lifecycle | Defining Tinnery's Flow semantics / 定义 Tinnery 的 Flow 语义 |
+| Tinnery Core | Flow contracts, version identity, invocation protocol, governance & evidence | Building generic scheduler / 构建通用调度器 |
+| Provider | Mapping contracts to actual business implementations / 将契约映射到实际业务实现 | Defining business rules / 定义业务规则 |
+| Host Application | Owning business code and domain semantics / 拥有业务代码和领域语义 | Duplicating business implementation for Tinnery / 为 Tinnery 复制业务实现 |
 
 ---
 
@@ -58,11 +59,17 @@ Activation / Rollback
 
 **Status: Proposed / 状态：提议**
 
-- Use Python standard library for P1 / P1 使用 Python 标准库
 - Synthetic test data only / 仅使用合成测试数据
-- Source data read-only / 源数据只读
+- Source data read-only (enforced via SQLite URI mode) / 源数据只读（通过 SQLite URI 模式强制）
 - Output in disposable target / 输出在可丢弃目标中
 - Transformation logic independent of database access / 转换逻辑独立于数据库访问
+- Tinnery Core protocol must remain independent of Dagster execution model / Tinnery Core 协议必须独立于 Dagster 执行模型
+
+**Note on Technology Choices / 关于技术选择的说明:**
+
+Typer and UV are used in the current P1 demonstration (`demos/contacts_cli/`), but they are not mandatory architectural constraints for Tinnery Core. Technology choices for Tinnery Core will be determined during P2 implementation based on actual requirements.
+
+Typer 和 UV 在当前 P1 演示（`demos/contacts_cli/`）中使用，但不是 Tinnery Core 的强制架构约束。Tinnery Core 的技术选择将在 P2 实施期间根据实际需求确定。
 
 ---
 

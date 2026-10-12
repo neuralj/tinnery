@@ -15,8 +15,14 @@
 
 ### Current Phase / 当前阶段: P1 — Host CLI Baseline / 宿主 CLI 基线
 
-**P1 Status / P1 状态:** Active / 进行中  
-**Authorization / 授权:** Authorized — P1 scope only / 已授权 — 仅限 P1 范围
+**P1 Status / P1 状态:** Completed / 已完成  
+**Authorization / 授权:** Authorized — P1 scope only / 已授权 — 仅限 P1 范围  
+**Completion / 完成时间:** 2026-10-12  
+**Evidence / 证据:** 
+- 13 tests passing locally / 本地 13 个测试通过
+- CI verified on GitHub Actions (push events) / CI 在 GitHub Actions 上验证（push 事件）
+- PR trigger: not yet verified / PR 触发：尚未验证
+- Failure scenario: not yet verified / 失败场景：尚未验证
 
 #### P1 Objective / P1 目标
 
