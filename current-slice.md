@@ -65,9 +65,15 @@ Establish a small, independently runnable SQLite contact-normalization CLI befor
 
 ### Current Phase / 当前阶段: P2 — Shared Flow Protocol / 共享 Flow 协议
 
-**P2 Status / P2 状态:** Active / 进行中  
+**P2 Status / P2 状态:** Completed / 已完成  
 **Authorization / 授权:** Authorized — P2 scope only / 已授权 — 仅限 P2 范围  
-**Start Time / 开始时间:** 2026-10-12
+**Start Time / 开始时间:** 2026-10-12  
+**Completion / 完成时间:** 2026-10-12  
+**Evidence / 证据:**
+- 22 root tests (protocol + dual-entry acceptance) and 13 demo tests passing locally / 本地 22 个根测试（协议 + 双入口验收）与 13 个演示测试通过
+- CI verified on GitHub Actions: run 38197271229, commit 10df1d1 (22 + 13 passed) / CI 在 GitHub Actions 上验证：run 38197271229，commit 10df1d1（22 + 13 通过）
+- Dual-entry shared identity, single-implementation routing (spy: 2 calls, 1 implementation), and evidence hash verifiability covered by acceptance tests / 双入口共享身份、单一实现路由（spy：2 次调用、1 份实现）与证据哈希可验证性均有验收测试覆盖
+- All acceptance criteria met / 全部验收标准已满足
 
 #### P2 Objective / P2 目标
 

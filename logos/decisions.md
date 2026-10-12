@@ -48,7 +48,7 @@ A conflict is a condition requiring resolution; it must not silently override an
 
 > **Type / 类型:** Decision
 > **Lifecycle / 生命周期:** accepted / 已接受
-> **Realization / 实现状态:** partial / 部分实现（P2 进行中）
+> **Realization / 实现状态:** partial / 部分实现 — P2 dual-entry integration verified via tests and CI; no Dagster UI or scheduling exercised / P2 双入口集成已由测试与 CI 验证；Dagster UI 与调度未实际使用
 > **Scope / 范围:** project / 项目级
 > **Proposed / 提议时间:** 2026-10-12
 > **Accepted / 接受时间:** 2026-10-12
