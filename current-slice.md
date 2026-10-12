@@ -114,21 +114,28 @@ Prove that the native CLI and Dagster invoke the same business implementation th
 
 验证候选版本隔离、独立接受、显式激活、停用、回滚和执行可追溯性。
 
-**Sub-direction: AI Agent Assessment / 子方向：AI Agent 评估机制**
+**Sub-direction: Agent Work Summary and Assessment / AI Agent 工作总结与执行评估**
 
-In AI-driven development workflows, the AI agent itself can provide assessment and feedback on Flow execution results, complementing code-based verification. This requires a mechanism to record AI agent assessments as a third type of evidence alongside `ExecutionReceipt` and `VerificationRecord`.
+**Status:** PROPOSED — P3 design scope only. No implementation authorization is implied.
 
-在 AI 驱动的开发工作流中，AI agent 本身可以对 Flow 执行结果提供评估和反馈，作为代码验证的补充。这需要一种机制来记录 AI agent 的评估，作为与 `ExecutionReceipt` 和 `VerificationRecord` 并列的第三类证据。
+**Objective:** Preserve structured, traceable records of AI Agent development work and execution assessments, so subsequent Agents and human reviewers can reuse prior findings without treating AI-generated conclusions as authoritative correctness claims.
 
-Proposed design / 提议的设计：
-- `AgentAssessment` record: links to `invocation_id`, includes agent identity, natural language summary, confidence score, findings, and recommendations
-  `AgentAssessment` 记录：关联到 `invocation_id`，包含 agent 身份、自然语言总结、置信度、发现和建议
-- Storage: extend `EvidenceJournal` or create independent `AgentJournal`
-  存储：扩展 `EvidenceJournal` 或创建独立的 `AgentJournal`
-- Trigger: AI agent invokes assessment after execution, or automatically triggered post-execution
-  触发：AI agent 在执行后调用评估，或执行后自动触发
-- Relationship to verification: AI assessment is complementary to code verification, not a replacement
-  与验证的关系：AI 评估是对代码验证的补充，而非替代
+**Proposed record types:**
+
+- `AgentWorkSummary` — task/session-level record of the objective, affected implementation identities, relevant changes and execution evidence, verified findings, unresolved questions, known limitations, and follow-up recommendations. It records work products and evidence-backed conclusions, not a raw internal reasoning transcript.
+- `AgentAssessment` — run-level record referencing the specific invocation, implementation, and artifacts assessed; the Agent/model identity and applicable assessment-policy version; the evidence reviewed; findings, concerns, limitations, and recommendations. Confidence is optional and must be marked uncalibrated unless appropriately calibrated.
+
+**Evidence and governance:**
+
+- These records complement `ExecutionReceipt` and `VerificationRecord`; they do not replace programmatic verification or human decisions.
+- An Agent assessment cannot independently authorize acceptance, activation, or rollback. Conflicts with programmatic verification must remain visible and trigger the applicable review policy.
+- Corrections and reassessments create linked records rather than silently overwriting historical conclusions.
+
+**Storage and triggering:** Define record semantics and evidence relationships before choosing storage. Reuse an existing evidence journal if its semantics fit; do not introduce a separate journal by default. Summaries should be produced at meaningful task milestones or handoff, while execution assessments may be explicitly requested or policy-triggered.
+
+**Non-goals:** No autonomous approval mechanism, no assumption that model confidence is calibrated, and no authorization to implement a journal service or version-activation workflow.
+
+**Design principle:** AI work and assessments should be reusable and auditable; their conclusions remain claims whose authority depends on independently checkable evidence and applicable governance policy.
 
 **Blocking prerequisite / 阻塞前置条件:** §7 of the reference prototype's research notes asks what threat
 model applies to candidate execution (accidental bug, prompt-injected code, or actively malicious
