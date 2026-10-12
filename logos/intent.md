@@ -91,6 +91,6 @@ The current-slice contract defines how this Goal will be validated. Acceptance o
 
 ## Current Slice / 当前切片
 
-See `current-slice.md` for the currently authorized engineering scope, acceptance criteria, verification evidence, and stop conditions.
+See `current-slice.md` for the proposed engineering scope, current authorization status, acceptance criteria, verification evidence, and stop conditions.
 
-当前获准的工程范围、验收标准、验证证据及停止条件，参见 `current-slice.md`。
+提议的工程范围、当前授权状态、验收标准、验证证据及停止条件，参见 `current-slice.md`。

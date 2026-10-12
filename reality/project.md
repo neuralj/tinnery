@@ -3,8 +3,8 @@
 > **Type / 类型:** Reality / 现实
 > **Status / 状态:** Observed facts / 观察事实
 > **Scope / 范围:** Project / 项目级
-> **Observed Revision / 观察版本:** fb6a69c39e003d3f31758c802d1ba2717b63ce6e
-> **Observation Time / 观察时间:** 2026-10-11
+> **Observed Revision / 观察版本:** 7ba9089abc198c3b1c59f8f87e85b566a4ec5425
+> **Observation Time / 观察时间:** 2026-10-12
 > **Source / 来源:** Repository inspection / 仓库检查
 
 ---
