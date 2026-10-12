@@ -382,3 +382,65 @@ This contract makes **no claim** about:
 - Version activation, rollback, or anti-rollback / 版本激活、回滚、反回滚
 - Full JSON Schema conformance / 完整 JSON Schema 一致性
 - Dagster integration beyond an optional adapter / 超出可选适配器的 Dagster 集成
+
+---
+
+## 9. Proposed Target Changes for Slice A / Slice A 的目标变更提案
+
+> **Status / 状态:** PROPOSED — Not yet implemented / 提案中 — 尚未实现
+>
+> This section describes target changes for Post-P2 Slice A. These changes are not yet implemented in the current codebase. After implementation and verification, this section will be updated to reflect the accepted contract.
+>
+> 本节描述 Post-P2 Slice A 的目标变更。这些变更尚未在当前代码库中实现。实施并验证后，本节将更新以反映已接受的契约。
+
+### 9.1 ExecutionReceipt New Fields / ExecutionReceipt 新增字段
+
+```python
+@dataclass(frozen=True)
+class ExecutionReceipt:
+    receipt_version: str  # "2" for Slice A changes / Slice A 变更为 "2"
+    # ... existing fields (lines 200-220) / 现有字段（第 200-220 行）...
+    
+    # New fields for Slice A / Slice A 新增字段
+    bind_time_identity: ImplementationIdentity | None = None
+    observed_identity: ImplementationIdentity | None = None
+```
+
+### 9.2 Field Assignment Rules / 字段赋值规则
+
+| Scenario / 场景 | `bind_time_identity` | `observed_identity` |
+|---|---|---|
+| Normal execution / 正常执行 | `flow.identity` | `flow.identity` (equal to bind-time) |
+| Drift detected / 检测到漂移 | `flow.identity` | Re-identified identity (different from bind-time) / 重新识别的身份（与绑定时不同） |
+| Identity unavailable / 身份不可用 | `flow.identity` | `None` |
+| Input rejected before identity check / 输入在身份检查前被拒绝 | `flow.identity` | `None` |
+
+### 9.3 `checked_output_sha256` Semantic Change / `checked_output_sha256` 语义变更
+
+**Version 1 / 版本 1:**
+- Directly copies `result.receipt.output_sha256` / 直接复制 `result.receipt.output_sha256`
+
+**Version 2 / 版本 2:**
+- Recomputes actual output digest / 重新计算实际输出的摘要
+- Compares with receipt's expected digest / 与回执中的预期摘要比对
+- If mismatch: `REJECTED` with `output_integrity_violation` / 若不匹配：`REJECTED`，失败代码为 `output_integrity_violation`
+- Passes normalized independent copy to verifier / 向 verifier 传递规范化后的独立副本
+
+### 9.4 New Failure Code / 新增失败代码
+
+| Code / 代码 | Meaning / 含义 | State / 状态 |
+|---|---|---|
+| `output_integrity_violation` | Output digest does not match receipt's expected digest / 输出摘要与回执预期摘要不一致 | `REJECTED` |
+
+### 9.5 Receipt Version Upgrade / 回执版本升级
+
+- Version 1 → Version 2 / 版本 1 → 版本 2
+- Structural change: two new identity fields / 结构变更：新增两个身份字段
+- Backward compatibility: version 1 records still readable, but lack new fields / 向后兼容：版本 1 记录仍可读取，但缺少新字段
+- Tests should verify version 2 record JSON structure / 测试应验证版本 2 记录的 JSON 结构
+
+### 9.6 Known Limitations (Not in Slice A) / 已知限制（不在 Slice A 范围）
+
+- Host persistence (`tasks.py` not passing `EvidenceJournal`) / 宿主持久化（`tasks.py` 未传入 `EvidenceJournal`）
+- Journal write failure handling / Journal 写入失败处理
+- Automatic retry, compensation, rollback, or failure recovery mechanisms / 自动重试、补偿、回滚或失败恢复机制

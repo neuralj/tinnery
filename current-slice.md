@@ -167,6 +167,70 @@ Host `tasks.py` does not pass `EvidenceJournal`, receipts not persisted (`tasks.
 4. Evidence persistence status is explicit, does not imply unaudited receipts form audit records / 证据持久化状态明确，不暗示未持久化的回执已形成审计记录
 5. Root tests, demo tests, and CI provide traceable verification evidence / 根测试、演示测试与 CI 都能提供可追溯的验证证据
 
+#### Semantic Decisions / 语义决策
+
+**Decision 1: `implementation_sha256` 是源码级身份 / `implementation_sha256` is source-level identity**
+
+- Composition / 组合: entrypoint + source + manifest
+- Does not include `callable_code_sha256` / 不包含 `callable_code_sha256`
+- Runtime detects drift via full `ImplementationIdentity` / 运行时通过完整 `ImplementationIdentity` 检测漂移
+
+**Decision 2: Drift Receipt Field Semantics / 漂移回执字段语义**
+
+| Field / 字段 | Semantics / 语义 |
+|---|---|
+| `bind_time_identity` | Identity snapshot saved at bind time, always from `flow.identity` / 绑定时保存的身份快照，始终来自 `flow.identity` |
+| `observed_identity` | Identity successfully re-identified during this invocation; `None` if not yet checked or unavailable / 本次调用期间成功重新识别得到的身份；尚未检查或无法识别时为 `None` |
+
+Assignment rules / 赋值规则:
+- Normal execution / 正常执行: Both identities exist and are equal / 两个身份均存在且相等
+- Drift detected / 检测到漂移: Both identities exist and differ, invocation rejected / 两个身份均存在且不同，调用被拒绝
+- Identity unavailable / 身份不可用: Bind-time identity exists, observed identity is `None`, failure code is `implementation_identity_unavailable` / 绑定身份仍存在，观测身份为 `None`，失败代码为 `implementation_identity_unavailable`
+- Input rejected before identity check / 输入在身份检查前被拒绝: Observed identity is `None` / 观测身份为 `None`
+
+`receipt_version` upgraded from `"1"` to `"2"` (structural change) / `receipt_version` 从 `"1"` 升级为 `"2"`（结构变更）
+
+Existing flat fields (`implementation_sha256`, etc.) preserved, representing bind-time identity / 保留现有扁平字段（`implementation_sha256` 等），代表绑定时身份
+
+**Decision 3: Output Inconsistency Verification Status / 输出不一致时的验证状态**
+
+- Status / 状态: `REJECTED`
+- Failure code / 失败代码: `output_integrity_violation`
+- `checked_output_sha256` represents **actually observed** output digest (recomputed), not expected digest from receipt / `checked_output_sha256` 表示**实际观察到的**输出摘要（重新计算），而非回执中的预期摘要
+- Pass normalized independent copy to verifier / 向 verifier 传递规范化后的独立副本
+
+**Decision 4: Host Persistence (Known Limitation) / 宿主持久化（已知限制）**
+
+- Do not modify `tasks.py` / 不修改 `tasks.py`
+- Do not claim CLI receipts are persisted / 不声称 CLI 的回执已经持久化
+- In-memory receipts ≠ audit records / 内存回执 ≠ 审计记录
+
+**Decision 5: Journal Write Failure (Known Limitation) / Journal 写入失败（已知限制）**
+
+- Not handled in this slice / 本轮不处理
+- Current behavior: exception propagates upward / 当前行为：异常向上传播
+- No automatic retry, compensation, rollback, or failure recovery mechanism designed / 不设计自动重试、补偿、回滚或失败恢复机制
+
+#### Core Tests / 核心测试
+
+| File / 文件 | Test Name / 测试名称 | Behavior Proven / 证明的行为 |
+|---|---|---|
+| `test_identity_drift.py` | `test_bytecode_change_alters_full_identity_not_source_digest` | Code digest changes, full identity changes, source-level digest unchanged / 代码摘要改变，完整身份改变，源码级摘要保持不变 |
+| `test_runtime_drift.py` | `test_identity_drift_is_rejected_before_invocation` | Drift causes rejection, business function not called / 漂移导致拒绝，业务函数没有被调用 |
+| `test_runtime_drift.py` | `test_receipt_records_bind_time_and_observed_identity` | Receipt accurately records bind-time and observed identities / 回执准确记录绑定身份和观测身份 |
+| `test_verification_integrity.py` | `test_modified_output_is_rejected_without_calling_verifier` | Modified output causes integrity rejection, verifier not executed / 修改输出导致完整性拒绝，verifier 不执行 |
+| `test_verification_integrity.py` | `test_unmodified_output_is_verified_against_receipt_digest` | Normal output matches receipt digest, verification proceeds normally / 正常输出与回执摘要匹配时，验证照常进行 |
+| `test_evidence_persistence.py` | `test_invoke_returns_receipt_without_journal` | Core invocation returns receipt when Journal not configured / 未配置 Journal 时，Core 调用仍返回回执 |
+| `test_evidence_persistence.py` | `test_journal_persists_execution_receipt` | JSONL contains corresponding receipt when Journal configured / 配置 Journal 时，JSONL 中出现对应回执 |
+| `test_evidence_persistence.py` | `test_journal_does_not_change_execution_outcome` | Writing to Journal does not change business result or key identity digests / 写入 Journal 不改变调用的业务结果和关键身份摘要 |
+
+#### Receipt Version Strategy / 回执版本策略
+
+- `receipt_version` upgraded from `"1"` to `"2"` / `receipt_version` 从 `"1"` 升级为 `"2"`
+- Version 2 new fields: `bind_time_identity`, `observed_identity` / 版本 2 新增字段：`bind_time_identity`、`observed_identity`
+- Existing flat fields preserved, representing bind-time identity / 现有扁平字段保留，代表绑定时身份
+- Tests should verify version 2 record JSON structure / 测试应验证版本 2 记录的 JSON 结构
+
 ---
 
 ### Future Phases (Not Yet Authorized) / 未来阶段（尚未授权）
