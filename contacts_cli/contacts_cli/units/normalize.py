@@ -1,9 +1,7 @@
-"""
-Pure contact normalization logic.
+"""Unit: Contact normalization capability.
 
-This module contains only the transformation logic, independent of
-database access or persistence. It receives records and returns
-normalized records.
+This unit provides a stable capability boundary for normalizing contact records.
+It hides internal implementation details and exposes a clean input/output contract.
 """
 
 from typing import Any
@@ -15,26 +13,20 @@ class NormalizationError(Exception):
 
 
 def normalize_contact(contact: dict[str, Any]) -> dict[str, Any]:
-    """
-    Normalize a single contact record.
+    """Normalize a single contact record.
+
+    Contract:
+        Input: dict with keys contact_id, full_name, email
+        Output: dict with same keys, normalized values
+        Errors: Raises NormalizationError if validation fails
 
     Rules:
-    - Preserve contact_id as the stable output key
-    - Normalize full_name: trim whitespace, collapse consecutive spaces
-    - Normalize email: trim whitespace, convert to lowercase
-    - Reject null or empty normalized names
-    - Reject null or empty normalized emails
-
-    Args:
-        contact: Input contact dict with keys: contact_id, full_name, email
-
-    Returns:
-        Normalized contact dict with same keys
-
-    Raises:
-        NormalizationError: If name or email is null/empty after normalization
+        - Preserve contact_id as the stable output key
+        - Normalize full_name: trim whitespace, collapse consecutive spaces
+        - Normalize email: trim whitespace, convert to lowercase
+        - Reject null or empty normalized names
+        - Reject null or empty normalized emails
     """
-    # Extract fields
     contact_id = contact.get("contact_id")
     full_name = contact.get("full_name")
     email = contact.get("email")
@@ -65,20 +57,15 @@ def normalize_contact(contact: dict[str, Any]) -> dict[str, Any]:
 
 
 def normalize_contacts(contacts: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """
-    Normalize a batch of contacts.
+    """Normalize a batch of contacts.
+
+    Contract:
+        Input: list of contact dicts
+        Output: list of normalized contact dicts
+        Errors: Raises NormalizationError if any contact fails validation
 
     This function validates the complete input before returning any results.
     If any contact is invalid, the entire batch fails.
-
-    Args:
-        contacts: List of contact dicts
-
-    Returns:
-        List of normalized contact dicts
-
-    Raises:
-        NormalizationError: If any contact fails validation
     """
     normalized = []
 

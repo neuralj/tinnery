@@ -1,1 +1,0 @@
-# Contact normalization CLI demonstration

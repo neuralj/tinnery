@@ -3,7 +3,7 @@
 > **Type / 类型:** Reality / 现实
 > **Status / 状态:** Observed facts / 观察事实
 > **Scope / 范围:** Project / 项目级
-> **Observed Revision / 观察版本:** 342e027
+> **Observed Revision / 观察版本:** 0fd25b9
 > **Observation Time / 观察时间:** 2026-10-12
 > **Source / 来源:** Repository inspection / 仓库检查
 
@@ -14,7 +14,7 @@
 **Repository:** tinnery
 **Remote:** https://github.com/neuralj/tinnery
 **Language:** Python 3.14
-**Status:** P1 implementation completed / P1 实现完成
+**Status:** P1 implementation completed with CLI → Task → Unit architecture / P1 实现完成，采用 CLI → Task → Unit 架构
 
 ---
 
@@ -30,17 +30,23 @@ tinnery/
 │   └── project.md     # Observed facts / 观察事实
 ├── engineering/
 │   └── overview.md    # Engineering models and constraints / 工程模型与约束
-├── examples/
-│   └── contacts_cli/  # P1 demonstration / P1 演示
-│       ├── __init__.py
-│       ├── normalize.py      # Pure transformation logic / 纯转换逻辑
-│       ├── db.py             # SQLite operations / SQLite 操作
-│       ├── cli.py            # CLI entry point / CLI 入口
-│       ├── create_sample_db.py  # Sample data generator / 示例数据生成
-│       └── tests/
-│           ├── __init__.py
-│           ├── test_normalize.py      # Unit tests / 单元测试
-│           └── test_integration.py    # Integration tests / 集成测试
+├── contacts_cli/      # P1 demonstration / P1 演示
+│   ├── pyproject.toml              # UV dependency management / UV 依赖管理
+│   ├── README.md                   # Usage instructions / 使用说明
+│   ├── contacts_cli/
+│   │   ├── __init__.py
+│   │   ├── cli.py                  # CLI layer (Trigger) / CLI 层（触发器）
+│   │   ├── tasks.py                # Task layer (Orchestrator) / Task 层（编排器）
+│   │   ├── config.py               # Configuration management / 配置管理
+│   │   └── units/
+│   │       ├── __init__.py
+│   │       ├── normalize.py        # Unit: Contact normalization / Unit：联系人标准化
+│   │       └── database.py         # Unit: Database operations / Unit：数据库操作
+│   └── tests/
+│       ├── conftest.py             # Pytest configuration / Pytest 配置
+│       ├── test_cli.py             # CLI layer tests / CLI 层测试
+│       ├── test_tasks.py           # Task layer tests / Task 层测试
+│       └── test_units.py           # Unit layer tests / Unit 层测试
 ├── current-slice.md   # Current engineering task / 当前工程任务
 ├── AGENTS.md          # Agent instructions / Agent 工作规则
 ├── README.md          # Project introduction / 项目介绍
@@ -54,25 +60,32 @@ tinnery/
 
 ## Implementation Status / 实现状态
 
-**Code:** P1 completed (examples/contacts_cli/) / P1 已完成 (CURRENT)
-**Tests:** 20 tests passing / 20 个测试通过 (CURRENT)
+**Code:** P1 completed with CLI → Task → Unit architecture / P1 已完成，采用 CLI → Task → Unit 架构 (CURRENT)
+**Tests:** 13 tests passing / 13 个测试通过 (CURRENT)
 **Deployment:** Not deployed / 未部署 (CURRENT)
 
 ### P1 Implementation Details / P1 实现细节
 
+**Architecture:**
+- **CLI Layer** (`cli.py`): Receives external input, constructs execution requests, handles errors uniformly
+- **Task Layer** (`tasks.py`): Orchestrates the complete use case, coordinates multiple units
+- **Unit Layer** (`units/`): Provides stable capability boundaries, hides internal implementation
+
 **Files created:**
-- `examples/contacts_cli/normalize.py`: Pure transformation logic (108 lines)
-- `examples/contacts_cli/db.py`: SQLite read/write operations (115 lines)
-- `examples/contacts_cli/cli.py`: CLI entry point (43 lines)
-- `examples/contacts_cli/create_sample_db.py`: Sample data generator (52 lines)
-- `examples/contacts_cli/tests/test_normalize.py`: Unit tests (142 lines)
-- `examples/contacts_cli/tests/test_integration.py`: Integration tests (208 lines)
+- `contacts_cli/cli.py`: CLI layer using typer (68 lines)
+- `contacts_cli/tasks.py`: Task layer orchestrator (43 lines)
+- `contacts_cli/units/normalize.py`: Contact normalization unit (73 lines)
+- `contacts_cli/units/database.py`: Database operations unit (67 lines)
+- `contacts_cli/config.py`: Configuration management (5 lines)
+- `tests/test_cli.py`: CLI layer tests (65 lines)
+- `tests/test_tasks.py`: Task layer tests (73 lines)
+- `tests/test_units.py`: Unit layer tests (108 lines)
 
 **Test coverage:**
-- Normalization logic: 10 unit tests
-- Database operations: 3 tests
-- Full pipeline: 4 integration tests
-- Total: 20 tests, all passing
+- CLI layer: 3 tests
+- Task layer: 2 tests
+- Unit layer: 8 tests
+- Total: 13 tests, all passing
 
 **Verified behaviors:**
 - Whitespace trimming and collapsing / 空格修剪和合并
@@ -81,6 +94,14 @@ tinnery/
 - Batch validation / 批量验证
 - Failure atomicity / 失败原子性
 - Idempotent operations / 幂等操作
+- CLI → Task → Unit call chain / CLI → Task → Unit 调用链
+- Logger unified creation / Logger 统一创建
+- Error propagation / 错误传播
+
+**Dependencies:**
+- Runtime: typer >= 0.12.0
+- Dev: pytest >= 8.0.0
+- Package manager: UV
 
 ---
 
@@ -119,28 +140,48 @@ tinnery/
 
 **Test execution:**
 ```
-Ran 20 tests in 0.048s
-OK
+============================= test session starts ==============================
+platform linux -- Python 3.14.4, pytest-9.1.1, pluggy-1.6.0
+collected 13 items
+
+tests/test_cli.py::TestCLI::test_cli_run_command PASSED                  [  7%]
+tests/test_cli.py::TestCLI::test_cli_run_missing_source PASSED           [ 15%]
+tests/test_cli.py::TestCLI::test_cli_create_sample_command PASSED        [ 23%]
+tests/test_tasks.py::TestProcessContactsTask::test_process_contacts_success PASSED [ 30%]
+tests/test_tasks.py::TestProcessContactsTask::test_process_contacts_fails_on_invalid_input PASSED [ 38%]
+tests/test_units.py::TestNormalizeUnit::test_normalize_valid_contact PASSED [ 46%]
+tests/test_units.py::TestNormalizeUnit::test_normalize_collapses_whitespace PASSED [ 53%]
+tests/test_units.py::TestNormalizeUnit::test_normalize_rejects_null_name PASSED [ 61%]
+tests/test_units.py::TestNormalizeUnit::test_normalize_rejects_empty_name PASSED [ 69%]
+tests/test_units.py::TestNormalizeUnit::test_normalize_batch_valid_contacts PASSED [ 76%]
+tests/test_units.py::TestNormalizeUnit::test_normalize_batch_fails_on_invalid_contact PASSED [ 84%]
+tests/test_units.py::TestDatabaseUnit::test_read_contacts_from_source PASSED [ 92%]
+tests/test_units.py::TestDatabaseUnit::test_write_contacts_to_target PASSED [100%]
+
+============================== 13 passed in 0.09s ==============================
 ```
 
 **CLI execution:**
 ```
-$ python3 -m examples.contacts_cli.create_sample_db input.sqlite
-Created sample database: input.sqlite
-Inserted 5 contacts
+$ uv run contacts-cli create-sample input.sqlite
+INFO: Created sample database: input.sqlite
+INFO: Inserted 5 contacts
 
-$ python3 -m examples.contacts_cli.cli input.sqlite output.sqlite
-Success: Processed 5 contacts
-  Source: input.sqlite
-  Target: output.sqlite
-  Written: 5 contacts
+$ uv run contacts-cli run input.sqlite output.sqlite
+INFO: Reading contacts from source database
+INFO: Read 5 contacts
+INFO: Normalizing contacts
+INFO: Normalized 5 contacts
+INFO: Writing contacts to target database
+INFO: Wrote 5 contacts
+INFO: Successfully processed 5 contacts
 ```
 
 **Output verification:**
 ```
-(1, 'Alice Chen', 'alice@example.com')
-(2, 'Bob Smith', 'bob@example.com')
-(3, 'Charlie Brown', 'charlie@example.com')
-(4, 'Diana Prince', 'diana@example.com')
-(5, 'Eve Adams', 'eve@example.com')
+(1, 'Alice Chen', 'alice@example.com')      # Whitespace and case normalized
+(2, 'Bob Smith', 'bob@example.com')         # Email case normalized
+(3, 'Charlie Brown', 'charlie@example.com') # Whitespace trimmed
+(4, 'Diana Prince', 'diana@example.com')    # Multiple spaces collapsed
+(5, 'Eve Adams', 'eve@example.com')         # Email case normalized
 ```

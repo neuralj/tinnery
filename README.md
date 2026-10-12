@@ -6,25 +6,54 @@ Tinnery is a shared Flow protocol and governance layer for CLI applications.
 
 **Current Phase:** P1 — Host CLI Baseline (Completed)
 
-The first demonstration validates a small, independently runnable SQLite contact-normalization CLI.
+The first demonstration validates a small, independently runnable SQLite contact-normalization CLI using CLI → Task → Unit architecture.
+
+## Architecture
+
+The contacts-cli application follows the three-layer architecture pattern:
+
+```
+CLI (Trigger)
+  ↓
+Task (Orchestrator)
+  ↓
+Unit (Capability Boundary)
+```
+
+- **CLI Layer** (`cli.py`): Receives external input, constructs execution requests, handles errors uniformly
+- **Task Layer** (`tasks.py`): Orchestrates the complete use case, coordinates multiple units
+- **Unit Layer** (`units/`): Provides stable capability boundaries, hides internal implementation
 
 ## Quick Start
 
 ### Run the Contact Normalization CLI
 
-1. Create a sample input database:
+1. Navigate to the contacts-cli directory:
 
 ```bash
-python3 -m examples.contacts_cli.create_sample_db input.sqlite
+cd contacts_cli
 ```
 
-2. Run the normalization CLI:
+2. Install dependencies:
 
 ```bash
-python3 -m examples.contacts_cli.cli input.sqlite output.sqlite
+uv venv
+uv sync --extra dev
 ```
 
-3. Verify the output:
+3. Create a sample input database:
+
+```bash
+uv run contacts-cli create-sample input.sqlite
+```
+
+4. Run the normalization CLI:
+
+```bash
+uv run contacts-cli run input.sqlite output.sqlite
+```
+
+5. Verify the output:
 
 ```bash
 python3 -c "import sqlite3; conn = sqlite3.connect('output.sqlite'); cursor = conn.execute('SELECT * FROM normalized_contacts ORDER BY contact_id'); [print(row) for row in cursor.fetchall()]; conn.close()"
@@ -33,7 +62,8 @@ python3 -c "import sqlite3; conn = sqlite3.connect('output.sqlite'); cursor = co
 ### Run Tests
 
 ```bash
-python3 -m unittest discover -s examples/contacts_cli/tests -v
+cd contacts_cli
+uv run pytest -v
 ```
 
 ## Documentation
@@ -42,25 +72,6 @@ python3 -m unittest discover -s examples/contacts_cli/tests -v
 - **Intent:** [`logos/intent.md`](logos/intent.md) — Current commitments
 - **Current Slice:** [`current-slice.md`](current-slice.md) — Active task and authorization
 - **Agent Instructions:** [`AGENTS.md`](AGENTS.md) — How to work with this repository
-
-## Architecture
-
-### P1: Host CLI Baseline
-
-The contact normalization CLI demonstrates:
-
-- **Pure transformation logic** (`examples/contacts_cli/normalize.py`): Independent of database access
-- **Database operations** (`examples/contacts_cli/db.py`): SQLite read/write with separation of concerns
-- **CLI interface** (`examples/contacts_cli/cli.py`): Command-line entry point
-- **Comprehensive tests** (`examples/contacts_cli/tests/`): Unit and integration tests
-
-### Transformation Contract
-
-- Preserve `contact_id` as the stable output key
-- Normalize `full_name`: trim whitespace, collapse consecutive spaces
-- Normalize `email`: trim whitespace, convert to lowercase
-- Reject null or empty normalized names/emails
-- Validate complete input before mutating target (failure atomicity)
 
 ## Governance
 
