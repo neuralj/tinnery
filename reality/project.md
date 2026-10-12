@@ -3,9 +3,9 @@
 > **Type / 类型:** Reality / 现实
 > **Status / 状态:** Observed facts / 观察事实
 > **Scope / 范围:** Project / 项目级
-> **Repository HEAD / 仓库 HEAD:** 05ee95972a30a6cb40cf2864b81020a3c99eb7b9
+> **Repository HEAD / 仓库 HEAD:** f129bc8a729eae5da1233637de49c650791f2f37
 > **Code / Test Baseline / 代码与测试基线:** 5f7334d72a30a6cb40cf2864b81020a3c99eb7b9
-> **Observation Time / 观察时间:** 2026-10-12 19:32 GMT+8
+> **Observation Time / 观察时间:** 2026-10-12 20:03 GMT+8
 > **Source / 来源:** `git status`, `git log`, 测试执行, CI 验证 / git commands, test execution, CI verification
 
 ---
@@ -15,9 +15,9 @@
 **Repository:** tinnery
 **Remote:** https://github.com/neuralj/tinnery
 **Language:** Python 3.14 (host venv)
-**Status:** P2 completed at code baseline `5f7334d`. Current repository HEAD is `05ee959` (governance docs only). 26 root tests + 13 demo tests passing. CI verified (run 38234842585 for commit 5f7334d). Post-P2 Slice A proposed but not yet authorized.
+**Status:** P2 completed at code baseline `5f7334d`. Current repository HEAD is `f129bc8` (governance docs only). 26 root tests + 13 demo tests passing. CI verified (run 38234842585 for commit 5f7334d, run 38246592512 for commit f129bc8). Post-P2 Slice A proposed but not yet authorized.
 
-**当前状态：** P2 在代码基线 `5f7334d` 完成。当前仓库 HEAD 为 `05ee959`（仅治理文档）。26 个根测试 + 13 个演示测试通过。CI 已验证（run 38234842585 对应提交 5f7334d）。Post-P2 Slice A 已提案但尚未授权。
+**当前状态：** P2 在代码基线 `5f7334d` 完成。当前仓库 HEAD 为 `f129bc8`（仅治理文档）。26 个根测试 + 13 个演示测试通过。CI 已验证（run 38234842585 对应提交 5f7334d，run 38246592512 对应提交 f129bc8）。Post-P2 Slice A 已提案但尚未授权。
 
 ---
 
