@@ -7,7 +7,9 @@ so the host CLI and Dagster execute the same business implementation.
 
 import logging
 
-from contacts_cli.flows import invoke_normalize_flow
+from tinnery import Executor
+
+from contacts_cli.flows import CONTACTS_FLOW
 from contacts_cli.units.database import read_contacts, write_contacts
 
 
@@ -16,14 +18,14 @@ def process_contacts_task(source: str, target: str, logger: logging.Logger) -> d
 
     Contract:
         Input: source database path, target database path, logger
-        Output: dict with processing results, Tinnery trace_id and evidence_hash
+        Output: dict with processing results and execution receipt identifiers
         Errors: Raises if the Tinnery Flow invocation fails or units fail
 
     This task:
     1. Reads contacts from source database
     2. Normalizes contacts via Tinnery Core (contacts.normalize Flow)
     3. Writes normalized contacts to target database
-    4. Returns processing statistics with execution evidence identifiers
+    4. Returns processing statistics with execution receipt identifiers
     """
     logger.info("Reading contacts from source database")
     contacts = read_contacts(source)
@@ -32,17 +34,21 @@ def process_contacts_task(source: str, target: str, logger: logging.Logger) -> d
     logger.info(f"Read {source_count} contacts")
 
     logger.info("Normalizing contacts through Tinnery Core")
-    result, evidence = invoke_normalize_flow(contacts, invoked_by="host_cli")
-    if not result.is_success:
-        raise RuntimeError(f"contacts.normalize flow failed: {result.error}")
-    normalized = result.outputs["normalized_contacts"]
+    invocation = Executor().invoke(CONTACTS_FLOW, contacts)
+    receipt = invocation.receipt
+    if receipt.status != "SUCCEEDED":
+        raise RuntimeError(
+            f"contacts.normalize flow failed: {receipt.failure_code}"
+        )
+    normalized = invocation.output
     target_count = len(normalized)
 
     logger.info(
-        "Normalized %d contacts (trace_id=%s evidence_hash=%s)",
+        "Normalized %d contacts (invocation=%s contract=%s impl=%s)",
         target_count,
-        evidence.trace_id,
-        evidence.evidence_hash,
+        receipt.invocation_id,
+        receipt.contract_sha256[:16],
+        receipt.implementation_sha256[:16],
     )
 
     logger.info("Writing contacts to target database")
@@ -54,8 +60,8 @@ def process_contacts_task(source: str, target: str, logger: logging.Logger) -> d
         "source_count": source_count,
         "target_count": target_count,
         "success": True,
-        "trace_id": evidence.trace_id,
-        "evidence_hash": evidence.evidence_hash,
-        "invocation_result": result,
-        "execution_evidence": evidence,
+        "invocation_id": receipt.invocation_id,
+        "contract_sha256": receipt.contract_sha256,
+        "implementation_sha256": receipt.implementation_sha256,
+        "execution_receipt": receipt,
     }

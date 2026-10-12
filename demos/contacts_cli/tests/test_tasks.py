@@ -45,6 +45,10 @@ class TestProcessContactsTask:
             assert result["success"] is True
             assert result["source_count"] == 1
             assert result["target_count"] == 1
+            assert result["invocation_id"]
+            assert result["contract_sha256"]
+            assert result["implementation_sha256"]
+            assert result["execution_receipt"].status == "SUCCEEDED"
 
             # Verify target database
             conn = sqlite3.connect(target_db)

@@ -70,9 +70,12 @@ Establish a small, independently runnable SQLite contact-normalization CLI befor
 **Start Time / 开始时间:** 2026-10-12  
 **Completion / 完成时间:** 2026-10-12  
 **Evidence / 证据:**
-- 22 root tests (protocol + dual-entry acceptance) and 13 demo tests passing locally / 本地 22 个根测试（协议 + 双入口验收）与 13 个演示测试通过
-- CI verified on GitHub Actions: run 38197271229, commit 10df1d1 (22 + 13 passed) / CI 在 GitHub Actions 上验证：run 38197271229，commit 10df1d1（22 + 13 通过）
-- Dual-entry shared identity, single-implementation routing (spy: 2 calls, 1 implementation), and evidence hash verifiability covered by acceptance tests / 双入口共享身份、单一实现路由（spy：2 次调用、1 份实现）与证据哈希可验证性均有验收测试覆盖
+- 26 root tests (protocol + dual-entry acceptance) and 13 demo tests passing locally / 本地 26 个根测试（协议 + 双入口验收）与 13 个演示测试通过
+- Core API: FlowContract.define + bind_flow + Executor + ExecutionReceipt + verify_output
+- Dual-entry shared implementation verified: host CLI and Dagster use same BoundFlow / 双入口共享实现已验证：宿主 CLI 与 Dagster 使用同一 BoundFlow
+- Implementation identity: module_source_sha256 + callable_code_sha256 (bytecode disassembly) / 实现身份：源模块哈希 + 字节码反汇编哈希
+- Contract digest: stable SHA256 of canonical JSON / 契约摘要：规范 JSON 的稳定 SHA256
+- Independent verification: verify_output with self-certification prevention / 独立验证：verify_output 禁止自认证
 - All acceptance criteria met / 全部验收标准已满足
 
 #### P2 Objective / P2 目标

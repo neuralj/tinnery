@@ -39,8 +39,8 @@ def run(
         result = process_contacts_task(source, target, logger)
         logger.info(f"Successfully processed {result['target_count']} contacts")
         logger.info(
-            f"Tinnery execution evidence: trace_id={result['trace_id']} "
-            f"evidence_hash={result['evidence_hash'][:16]}..."
+            f"Tinnery execution receipt: invocation_id={result['invocation_id']} "
+            f"contract={result['contract_sha256'][:16]}..."
         )
     except Exception as e:
         logger.error(f"Failed to process contacts: {e}")
