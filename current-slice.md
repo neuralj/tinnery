@@ -13,6 +13,17 @@
 **Overall Slice Status / 整体切片状态:** Proposed / 提案中  
 **Related Goal / 相关目标:** G-01 — Candidate / 候选
 
+> **Current state / 当前状态（2026-10-12 更新）:**
+> Commit `7526b58` migrated to the `bind_flow` + independent-verification design. Core API:
+> `FlowContract`, `bind_flow`, `Executor`, `ExecutionReceipt`, `verify_output`, `VerificationRecord`.
+> 26 root tests + 13 demo tests passing. CI verified (run 38208967379).
+>
+> 提交 `7526b58` 已迁移到 `bind_flow` + 独立验证设计。Core API：`FlowContract`、`bind_flow`、
+> `Executor`、`ExecutionReceipt`、`verify_output`、`VerificationRecord`。26 个根测试 + 13 个演示测试通过。
+> CI 已验证（run 38208967379）。
+
+---
+
 ### Current Phase / 当前阶段: P1 — Host CLI Baseline / 宿主 CLI 基线
 
 **P1 Status / P1 状态:** Completed / 已完成  
@@ -55,27 +66,14 @@ Establish a small, independently runnable SQLite contact-normalization CLI befor
 
 ---
 
-### Future Phases (Not Yet Authorized) / 未来阶段（尚未授权）
-
-**P3 — Version Governance / 版本治理:** Verify candidate version isolation, independent acceptance, explicit activation, deactivation, rollback, and execution traceability.
-
-验证候选版本隔离、独立接受、显式激活、停用、回滚和执行可追溯性。
-
----
-
 ### Current Phase / 当前阶段: P2 — Shared Flow Protocol / 共享 Flow 协议
 
 **P2 Status / P2 状态:** Completed / 已完成  
 **Authorization / 授权:** Authorized — P2 scope only / 已授权 — 仅限 P2 范围  
-**Start Time / 开始时间:** 2026-10-12  
 **Completion / 完成时间:** 2026-10-12  
 **Evidence / 证据:**
-- 26 root tests (protocol + dual-entry acceptance) and 13 demo tests passing locally / 本地 26 个根测试（协议 + 双入口验收）与 13 个演示测试通过
-- Core API: FlowContract.define + bind_flow + Executor + ExecutionReceipt + verify_output
-- Dual-entry shared implementation verified: host CLI and Dagster use same BoundFlow / 双入口共享实现已验证：宿主 CLI 与 Dagster 使用同一 BoundFlow
-- Implementation identity: module_source_sha256 + callable_code_sha256 (bytecode disassembly) / 实现身份：源模块哈希 + 字节码反汇编哈希
-- Contract digest: stable SHA256 of canonical JSON / 契约摘要：规范 JSON 的稳定 SHA256
-- Independent verification: verify_output with self-certification prevention / 独立验证：verify_output 禁止自认证
+- 26 root tests (protocol + dual-entry acceptance) and 13 demo tests passing locally / 本地 26 个根测试与 13 个演示测试通过
+- CI verified on GitHub Actions: run 38208967379, commit 7526b58 / CI 验证：run 38208967379、commit 7526b58
 - All acceptance criteria met / 全部验收标准已满足
 
 #### P2 Objective / P2 目标
@@ -86,31 +84,20 @@ Prove that the native CLI and Dagster invoke the same business implementation th
 
 #### P2 Scope / P2 范围
 
-- `tinnery/` — Tinnery Core Library (Flow contracts, invocation protocol, provider interface, execution evidence)
-  Tinnery Core 库（Flow 契约、调用协议、Provider 接口、执行证据）
+- `tinnery/` — Tinnery Core Library
 - `tinnery/dagster/` — Dagster Integration (Resources, Ops, Jobs)
-  Dagster 集成（Resources、Ops、Jobs）
 - `demos/contacts_cli/` — Host CLI integration with Tinnery Core
-  宿主 CLI 与 Tinnery Core 的集成
 - `tests/` — Verification tests for dual-entry shared implementation
-  双入口共享实现的验证测试
 - `engineering/flow-contract.md` — Flow Contract specification
-  Flow 契约规范
 
 #### P2 Acceptance Criteria / P2 验收标准
 
 - Define Flow identity and contract (flow_id, version, contract_version)
-  定义 Flow 身份与契约（flow_id、version、contract_version）
 - Define typed invocation request and result
-  定义类型化调用请求与结果
 - Host CLI invokes business implementation through Tinnery Core
-  宿主 CLI 通过 Tinnery Core 调用业务实现
 - Dagster invokes the same business implementation through Dagster Integration
-  Dagster 通过 Dagster Integration 调用相同的业务实现
 - Both entries record execution evidence (flow_id, version, implementation_hash)
-  两个入口都记录执行证据（flow_id、version、implementation_hash）
 - Verify no duplicate business implementation
-  验证没有重复业务实现
 
 #### P2 Out of Scope / P2 范围外
 
@@ -121,9 +108,26 @@ Prove that the native CLI and Dagster invoke the same business implementation th
 
 ---
 
+### Future Phases (Not Yet Authorized) / 未来阶段（尚未授权）
+
+**P3 — Version Governance / 版本治理:** Verify candidate version isolation, independent acceptance, explicit activation, deactivation, rollback, and execution traceability.
+
+验证候选版本隔离、独立接受、显式激活、停用、回滚和执行可追溯性。
+
+**Blocking prerequisite / 阻塞前置条件:** §7 of the reference prototype's research notes asks what threat
+model applies to candidate execution (accidental bug, prompt-injected code, or actively malicious
+code). Until that is answered, "isolation" cannot be claimed for any execution path.
+参考原型的研究报告 §7 提出的问题：候选执行适用何种威胁模型（意外 bug、提示注入、还是主动恶意）。
+在此问题回答之前，任何执行路径都不能主张「隔离」。
+
+---
+
 **Authorization Rule / 授权规则:** Passing P1 does not automatically authorize P2, P3, or acceptance of G-01. All phase transitions require explicit authorization.
 
 通过 P1 不会自动授权 P2、P3 或接受 G-01。所有阶段转换都需要明确授权。
+
+**Current state / 当前状态:** P1 and P2 completed. No phase is Active. Code changes are not authorized by this document.
+当前状态：P1 与 P2 已完成。当前没有任何阶段处于 Active。本文档不授权代码变更。
 
 ---
 
