@@ -14,11 +14,11 @@
 **Related Goal / 相关目标:** G-01 — Candidate / 候选
 
 > **Current state / 当前状态（2026-10-12 更新）:**
-> Commit `7526b58` migrated to the `bind_flow` + independent-verification design. Core API:
+> Commit `5f7334d` migrated to the `bind_flow` + independent-verification design. Core API:
 > `FlowContract`, `bind_flow`, `Executor`, `ExecutionReceipt`, `verify_output`, `VerificationRecord`.
 > 26 root tests + 13 demo tests passing. CI verified (run 38208967379).
 >
-> 提交 `7526b58` 已迁移到 `bind_flow` + 独立验证设计。Core API：`FlowContract`、`bind_flow`、
+> 提交 `5f7334d` 已迁移到 `bind_flow` + 独立验证设计。Core API：`FlowContract`、`bind_flow`、
 > `Executor`、`ExecutionReceipt`、`verify_output`、`VerificationRecord`。26 个根测试 + 13 个演示测试通过。
 > CI 已验证（run 38208967379）。
 
@@ -105,6 +105,51 @@ Prove that the native CLI and Dagster invoke the same business implementation th
 - Rollback mechanisms / 回滚机制
 - Plugin frameworks (Entry Points, Pluggy, Stevedore) / 插件框架
 - Generic scheduler or workflow UI / 通用调度器或工作流 UI
+
+---
+
+### Post-P2 Slice A — Evidence Identity and Verification Integrity / 证据身份与验证完整性加固
+
+**Status / 状态:** Proposed / 提案中  
+**Authorization / 授权:** Not yet authorized / 尚未授权
+
+#### Objective / 目标
+
+Ensure that the facts expressed by core records match actual execution, establishing a trustworthy evidence foundation for subsequent governance.
+
+确保核心记录表达的事实与实际执行一致，为后续治理建立可信的证据基础。
+
+#### Identified Issues / 已识别问题
+
+1. `implementation_sha256` does not include `callable_code_sha256` (`identity.py:64-69`)
+   `implementation_sha256` 未包含 `callable_code_sha256`
+2. Drift receipt uses bind-time identity instead of observed identity (`runtime.py:114-117 vs 144-160`)
+   身份漂移回执使用绑定身份而非观察身份
+3. Verification does not check output consistency with `output_sha256` (`verification.py:70`)
+   验证时未检查输出是否与 `output_sha256` 一致
+4. Host `tasks.py` does not pass `EvidenceJournal`, receipts not persisted (`tasks.py:37`)
+   宿主 `tasks.py` 未传入 `EvidenceJournal`，回执未持久化
+
+#### Scope / 范围
+
+**Allowed modifications / 允许修改：**
+- `tinnery/identity.py` — fix `implementation_sha256` computation / 修正 `implementation_sha256` 计算
+- `tinnery/runtime.py` — preserve observed identity in drift receipt / 在漂移回执中保留观察到的身份
+- `tinnery/verification.py` — check output consistency before verification / 验证时检查输出一致性
+- New test files covering the above fixes / 新增测试文件覆盖上述修正
+
+**Not in scope / 不在范围内：**
+- Registry, AgentJournal, sandbox, version activation / 不实现 Registry、AgentJournal、沙箱、版本激活
+- Modify FlowContract or bind_flow semantics / 不修改 FlowContract 或 bind_flow 语义
+- Expand Dagster integration / 不扩建 Dagster 集成
+
+#### Acceptance Criteria / 验收标准
+
+1. `implementation_sha256` composition is explicit and test-protected / `implementation_sha256` 的组成明确且有测试保护
+2. Drift receipt distinguishes bind-time identity from observed identity / 身份漂移时回执能够区分绑定身份和观测身份
+3. Output passed to verifier must match receipt's output digest / 交给验证器的输出必须与回执记录的输出摘要对应
+4. Evidence persistence status is explicit, does not imply unaudited receipts form audit records / 证据持久化状态明确，不暗示未持久化的回执已形成审计记录
+5. Root tests, demo tests, and CI provide traceable verification evidence / 根测试、演示测试与 CI 都能提供可追溯的验证证据
 
 ---
 

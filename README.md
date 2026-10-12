@@ -4,10 +4,11 @@ Tinnery is a shared Flow protocol and governance layer for CLI applications.
 
 ## Project Status
 
-**Current Phase:** P2 — Shared Flow Protocol (Active)
+**Current Phase:** P2 — Shared Flow Protocol (Completed)
 
 - **P1 — Host CLI Baseline:** Completed. A contacts-normalization CLI using CLI → Task → Unit architecture.
-- **P2 — Shared Flow Protocol:** Tinnery Core library and Dagster integration proving that a host CLI and Dagster invoke the same business implementation through one versioned Flow contract, with execution evidence on both entries.
+- **P2 — Shared Flow Protocol:** Completed. Tinnery Core library and Dagster integration proving that a host CLI and Dagster invoke the same business implementation through one versioned Flow contract, with execution evidence on both entries.
+- **Post-P2 Slice A — Evidence Identity and Verification Integrity:** Proposed. Fix identity digest composition, drift receipt information, and output consistency verification. Not yet authorized.
 - **P3 — Version Governance:** Not yet authorized.
 
 ## Architecture
@@ -18,14 +19,14 @@ Tinnery is a shared Flow protocol and governance layer for CLI applications.
 Host CLI ──► Task ──► Tinnery Core ◄── Dagster Op/Job
                           │
                           ▼
-              Typed Provider (host-owned)
+              BoundFlow (host-owned)
                           │
                           ▼
               Business implementation (single source)
 ```
 
-- **Tinnery Core** (`tinnery/`): Flow identity, typed invocation protocol, execution evidence. Independent of Dagster.
-- **Dagster Integration** (`tinnery/dagster/`): Maps Dagster run requests (op config) to Tinnery Flow invocations.
+- **Tinnery Core** (`tinnery/`): Flow contracts (`FlowContract`), implementation binding (`bind_flow`), execution (`Executor`), receipts (`ExecutionReceipt`), independent verification (`verify_output`), and evidence journaling (`EvidenceJournal`). Independent of Dagster.
+- **Dagster Integration** (`tinnery/dagster/`): Maps Dagster run requests (op config) to Tinnery Flow invocations via `BoundFlow`.
 - **Host demo** (`demos/contacts_cli/`): Runs without Dagster; its Task layer invokes the Flow through Tinnery Core.
 - **Flow contract spec:** [`engineering/flow-contract.md`](engineering/flow-contract.md)
 

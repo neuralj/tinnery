@@ -1,7 +1,7 @@
 # Project Decisions / 项目决策
 
 > **Type / 类型:** Decision collection / 决策集合
-> **Status / 状态:** No decisions yet / 暂无决策
+> **Status / 状态:** 1 accepted decision / 1 个已接受决策
 > **Scope / 范围:** Project / 项目级
 > **Authority / 权威来源:** Tinnery project decisions / Tinnery 项目决策
 
@@ -93,7 +93,7 @@ P2 已被明确授权实施：
 - Host Provider: Invoke host-owned business implementations without duplicating business logic
   宿主 Provider：调用宿主拥有的实际业务实现，不复制业务逻辑
 
-**Status / 状态:** Accepted — P2 implementation in progress / 已接受 — P2 实施中
+**Status / 状态:** Accepted — P2 completed, Dagster UI/scheduling not yet exercised / 已接受 — P2 已完成，Dagster UI 与调度未实际使用
 
 ---
 
